@@ -1,4 +1,4 @@
-\documentclass{scrartcl}
+\documentclass{scrbook}
 \usepackage{fontspec}
 
 \author{Marek Kubica}
@@ -11,8 +11,70 @@
 
 \begin{document}
 \maketitle
-foo
-\texttt{Code0123456789}
+
+I assure the single handed composition of this bachelor's thesis only supported
+by declared resources.
+
+%\begin{abstract}
+%TODO
+%\end{abstract}
+
+\tableofcontents
+
+\chapter{Introduction}
+\label{sec:intro}
+
+Processing data is the use-case computers were invented for: doing calculations
+that are too complicated for manual computation or too time-consuming.
+Therefore, in the history of computing the representation of data was always
+very important. Usual hardware architectures used only to operate on scalar
+values, because the registers of CPUs could only store scalar values.
+
+Computers are very good at repeating tasks, so it is only natural to extend the
+processing of one record to processing multiple records on which the
+computation is repeated. Early computers worked on data in a batch structure,
+by reading a record from punch cards, computing the result and writing the
+result to punch cards. Later systems used their built-in memory to hold the
+data and multiple ways to organize this data were possible.
+
+One way to organize was using fixed-size arrays of values on which one
+particular operation was executed. Languages organizing data this way are APL
+and its sucessors J and K for example. Another example is the x86 assembly
+language with its special-purpose MMX and SSE extensions which compute on sets
+of registers holding floating point values.
+
+An alternative is the list abstraction. Seemingly similar to arrays, the
+high-level difference with lists is that lists do not usually have a fixed
+length. While arrays are usually implemented as sequence of data in memory,
+list implementations can be very flexible with different advantages and
+disadvantages. A very important language family that utilizes lists heavily is
+Lisp where even the source code is written in a list structure. Usually, all
+modern languages provide a convenient way to handle lists, many also provide
+syntactic extensions.
+
+In functional programming in particular, lists have been very important. TODO
+
+An evolution of lists is the sequence abstraction. Lists are limited by the
+available memory to hold all the records, whereas a sequence does not need to.
+To make this possible, sequences sacrifice some features of lists like random
+access on each record and instead provide a way to get the first element.
+
+TODO
+
+\chapter{Overview of existing solutions}
+\label{sec:solutions}
+
+\section{C++}
+\section{Java}
+\section{Python}
+\section{Lisp}
+\section{Haskell}
+
+\chapter{Inplementation}
+\label{sec:implementation}
+
+\chapter{Discussion}
+\label{sec:discussion}
 
 \bibliographystyle{plain}
 \bibliography{bachelor}
