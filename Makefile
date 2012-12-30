@@ -1,5 +1,5 @@
 all:
-	latexmk -pdf -pdflatex='lualatex -halt-on-error %O %S'
+	latexmk -pdf -pdflatex='lualatex -halt-on-error %O %S' bachelor.tex
 
 watch:
 	$(MAKE) all
