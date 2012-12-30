@@ -1,8 +1,37 @@
-\documentclass{scrbook}
+\documentclass{scrreprt}
 \usepackage{fontspec}
+\usepackage{multicol}
+
+% Define additional header fields
+\makeatletter
+\newcommand\Doctype[1]{\renewcommand\@Doctype{#1}}
+\newcommand\@Doctype{\@latex@error{No \noexpand\Doctype given}\@ehc}
+
+\newcommand\doctype[1]{\renewcommand\@doctype{#1}}
+\newcommand\@doctype{\@latex@error{No \noexpand\doctype given}\@ehc}
+
+\newcommand\germanTitle[1]{\renewcommand\@germanTitle{#1}}
+\newcommand\@germanTitle{\@latex@error{No \noexpand\germanTitle given}\@ehc}
+
+\newcommand\supervisor[1]{\renewcommand\@supervisor{#1}}
+\newcommand\@supervisor{\@latex@error{No \noexpand\supervisor given}\@ehc}
+
+\newcommand\advisor[1]{\renewcommand\@advisor{#1}}
+\newcommand\@advisor{\@latex@error{No \noexpand\advisor given}\@ehc}
+
+\newcommand\location[1]{\renewcommand\@location{#1}}
+\newcommand\@location{\@latex@error{No \noexpand\location given}\@ehc}
+\makeatother
+
+\Doctype{Bachelor's thesis}
+\doctype{bachelor's thesis}
 
 \author{Marek Kubica}
-\title{Bachelor Thesis}
+\title{TODO}
+\germanTitle{TODO}
+\supervisor{Prof. Dr. Alois Knoll}
+\advisor{Markus Weißmann, M.Sc.}
+\location{München}
 \date{\today}
 
 \setmainfont{Linux Libertine O}
@@ -12,8 +41,22 @@
 \begin{document}
 \maketitle
 
-I assure the single handed composition of this bachelor's thesis only supported
-by declared resources.
+\thispagestyle{empty}
+\vspace*{0.7\textheight}
+
+\noindent I assure the single handed composition of this
+\makeatletter\@doctype\makeatother\ only supported by declared resources.
+
+\vspace{1.5cm}
+\begin{multicols}{2}
+  \begin{center}
+    \makeatletter\@location\makeatother, \makeatletter\@date\makeatother
+  \end{center}
+  \begin{center}
+    \makeatletter\@author\makeatother
+  \end{center}
+\end{multicols}
+\clearpage
 
 %\begin{abstract}
 %TODO
