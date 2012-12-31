@@ -25,6 +25,8 @@
 \newcommand\@location{\@latex@error{No \noexpand\location given}\@ehc}
 \makeatother
 
+\newcommand\inline[1]{{\addfontfeature{Letters=SmallCaps}#1}}
+
 \Doctype{Bachelor's thesis}
 \doctype{bachelor's thesis}
 
@@ -102,7 +104,7 @@ and its sucessors J and K for example. Another example is the x86 assembly
 language with its special-purpose MMX and SSE extensions which compute on sets
 of registers holding floating point values.
 
-An alternative is the list abstraction. Seemingly similar to arrays, the
+An alternative is the \emph{list} abstraction. Seemingly similar to arrays, the
 high-level difference with lists is that lists do not usually have a fixed
 length. While arrays are usually implemented as sequence of data in memory,
 list implementations can be very flexible with different advantages and
@@ -111,14 +113,29 @@ Lisp where even the source code is written in a list structure. Usually, all
 modern languages provide a convenient way to handle lists, many also provide
 syntactic extensions.
 
-In functional programming in particular, lists have been very important. TODO
+In functional programming in particular, lists have been very important. Many
+languages utilize operators like \inline{first} and \inline{rest} to get the
+first element of the list and the remainder of the list. The second element can
+be expressed via \inline{first}, \inline{rest} and recursion. OCaml in
+particular provides \emph{pattern matching} and a special syntax to destructure
+lists in this way.
 
-An evolution of lists is the sequence abstraction. Lists are limited by the
-available memory to hold all the records, whereas a sequence does not need to.
-To make this possible, sequences sacrifice some features of lists like random
-access on each record and instead provide a way to get the first element.
+An evolution of lists is the \emph{sequence} abstraction. Lists are limited by
+the available memory to hold all the records, whereas a sequence does not need
+to.  To make this possible, sequences sacrifice some features of lists like
+random access on each record and instead provide a way to get the first
+element. As we saw, in the context of functional programming, this restriction
+is not problematic as other ways to work with this data exist.
 
-TODO
+These sequences might be \emph{lazy}, meaning that the sequence can be created
+without having to evaluate all values of itself. These values need only be
+evaluated when the head of the sequence is requested.
+
+OCaml is currently missing a solid implementation of these streams, therefore
+the objective in this bachelor's thesis is to provide a functional
+implementation of streams that can be composed. The effectiveness of this
+stream library is then demonstrated by building a library for data compression
+on top of it.
 
 \chapter{Overview of existing solutions}
 \label{sec:solutions}
