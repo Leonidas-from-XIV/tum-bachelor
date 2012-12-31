@@ -140,11 +140,91 @@ on top of it.
 \chapter{Overview of existing solutions}
 \label{sec:solutions}
 
+Lazy streams are a feature that many languages support since there is one
+specific use-case that nearly all languages support and that can only be
+reasonably implemented with a veriant of lazy streams: file handling.
+
+Most systems allow files to grow much larger than the operating memory of the
+system, therefore holding all data in memory is impossible. Yet languages need
+to support reading and writing such files. So the languages need to have an
+implementation of a data type that can be read incrementally, without having to
+hold it completely in memory.
+
+A number of popular languages were picked with interesting and contrasting
+approaches on this issue, so the advantages and disadvantages can be analyzed.
+The insights are used to propose of a good solution for OCaml.
+
 \section{C++}
+???
+
 \section{Java}
+\label{sec:java}
+
 \section{Python}
+\label{sec:python}
+
+Python is a dynamically-typed high level language designed in the the Nineties
+and enjoying constant improvement. It has seen rising adoption in the last few
+years in scientific communities as well as for web development. Much of this
+apotion can be attributed to the simplicity of the language and the thriving
+ecosystem.
+
+Contrasted to Java, Pythons solution to problems tend to fall on the more
+pragmatic side. TODO
+
+One important concept in Python is so called
+\emph{duck-typing}\footnote{\emph{If it walks like a duck, if it quacks like a
+duck, then it is a duck} is the typical explanation of this term} in which
+there is no formal interface like in Java but rather objects that provide
+specific behaviors.
+
+This means that every object can support any interface, as long as it provides
+the proper methods and returns the proper values. No special definitions are
+required and there is no required class hierarchy.
+
+\subsection{Iterables}
+\label{sec:pyiterable}
+
+One important interface in Python is the \emph{Iterable}, that is an object
+over which it is possible to iterate. Iterables are only required to support
+very limited operations:
+
+\begin{itemize}
+
+  \item Provide a \inline{\_\_next\_\_} method which returns the next value of
+	  the iterable.
+
+  \item Throw a \inline{StopIteration} exception after the last element was
+	  returned.  This is used to denote that the iterable was consumed and
+	  will not provide any more values.
+
+\end{itemize}
+
+Python's built-in datatypes support this interface, therefore implementing
+these interfaces in custom types enables the standard Python syntax to use them
+just like every other type. In particular, lists support this interface but
+also strings and files as well.
+
+TODO: add code that implements an iterable
+
+Python also has additional syntactic support for so called \emph{generators}
+which are ordinary functions that use the \inline{yield} keyword instead of
+the \inline{return} keyword. This causes the functions return value to turn
+into an iterable, return the value and suspend. Each element of the iterable
+causes the function to resume and run until the next \inline{yield} is reached.
+Reaching the end of the function or a \inline{return} statement causes a
+\inline{StopIteration} exception being thrown.
+
+TODO: demonstrate generator
+
+\subsection{File-like objects}
+\label{sec:pyfile}
+
+
 \section{Lisp}
+
 \section{Haskell}
+\label{sec:haskell}
 
 \chapter{Inplementation}
 \label{sec:implementation}
