@@ -3,6 +3,7 @@
 \usepackage{multicol}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{csquotes}
 
 % Define additional header fields
 \makeatletter
@@ -154,8 +155,54 @@ A number of popular languages were picked with interesting and contrasting
 approaches on this issue, so the advantages and disadvantages can be analyzed.
 The insights are used to propose of a good solution for OCaml.
 
-\section{C++}
-???
+\section{C}
+\label{sec:c}
+
+The C programming language hardly needs any introduction, considering it is
+among the most widely used programming languages. Unlike many others, the C
+programming language is rather old and lacking some modern features. The C type
+system essentially only knows about numbers: pointers are a special case of
+numbers and strings are also represented as arrays of numbers.
+
+Therefore, with the lack of syntactic support many libraries have to emulate
+functionality using functions and macros. One very fundamental library for C is
+of course the Standard Library (\enquote{stdlib}) which is usually provided by
+a library called \enquote{libc} and shipped by the operating system.
+
+This basic library provides functions for handling strings, copying data in a
+convenient way, handling files and many more. In fact, handling files is one of
+the tasks where streaming data is useful since otherwise the whole file would
+need to fit completely in memory. When C was first designed, main memory was
+several magnitudes smaller than currently, so the designers had to come up with
+a solution.
+
+The C solution is to use an interface that comes directly from the operating
+system: file descriptors. File descriptiors (FDs) are basically just integer
+numbers that reference an opened file. This concept can be even considered lazy
+evaluated, since opening a file does not require reading its contents. In C,
+file descriptors are usually wrapped in a data type called \inline{FILE}, but
+working directly with the descriptors directly is also possible, if somewhat
+less convenient.
+
+A file is read by using a stdlib function called \inline{fread} which takes a
+buffer as a first argument, as location on where to save the data read in main
+memory, a size indicator for letting the system know how big one element of the
+buffer is, a count, to notify how many elements to read and finally an opened
+file, wrapped by the \inline{FILE} type\footnote{A similar function
+\inline{read} does the same thing with a file descriptor instead of a
+\inline{FILE}}. An analogous functionality is implemented by \inline{fwrite} to
+write data to files.
+
+This functionality seems limited to files, but that is not the case. C also
+knows 3 \enquote{files} that are not actually files: \inline{stdin} for reading
+data from the user, \inline{stdout} for writing output to the user and
+\inline{stderr} for writing error output. These references can be used where a
+\inline{FILE} is required and do not need to be saved to disk. Thus C has
+\emph{some} support for streaming data.
+
+TODO: add demonstration on how to read a file.
+
+TODO: libarchive
 
 \section{Java}
 \label{sec:java}
