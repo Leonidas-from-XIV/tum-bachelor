@@ -291,14 +291,63 @@ TODO: demonstrate generator
 \subsection{File-like objects}
 \label{sec:pyfile}
 
-
-\section{Lisp}
-
-\section{Haskell}
-\label{sec:haskell}
-
-\chapter{Inplementation}
+\chapter{Implementation}
 \label{sec:implementation}
+
+\section{Architecture}
+\label{sec:architecture}
+
+TODO: TikZ picture
+
+\section{Compression}
+\label{sec:compression}
+
+There are many possibilities to demonstrate the use of a streaming library so
+to find an application which is interesting enough for the thesis while not too
+complex to exceed the scope, compression is a good fit.
+
+From the viewpoint of the OCaml software ecosystem, this pick makes sense, as
+there is no widely adopted software library to deal with compression in a
+universal way. There is a number of solutions an OCaml programmer can choose
+from, but each suffers from some problems.
+
+\subsection{Possible alternatives}
+\label{sec:alternatives}
+
+There is some selection in solutions that cover only some of the functionality
+that is usually expected from a compression library.
+
+\begin{itemize}
+  \item camlzip\footnote{\url{https://forge.ocamlcore.org/projects/camlzip/}}:
+    Mature library, but supports only Zip archives. One specific limitation is
+    the lack of support for in-memory data which requires to read and write
+    temporary files causing bad performance. Also, appears to be in maintenance
+    mode with hardly any changes in the last years.
+  \item OCamlBZ2\footnote{\url{https://forge.ocamlcore.org/projects/camlbz2/}}:
+    This library is limited to handle only bz2 compression and is a direct
+    binding to libbz2. Maintenance of the library seems to have stopped many
+    years ago after only two releases. One disadvantage is that raw bz2
+    streams are rare — usually multiple files are wrapped in tar archives,
+    for which this library has no support.
+  \item ocaml-tar\footnote{\url{https://github.com/samoht/ocaml-tar}}:
+    implements tar format archives in pure OCaml code. This implements
+    \emph{one} type of tar, whereas libarchive supports multiple variants.
+  \item ocaml-archive\footnote{\url{https://forge.ocamlcore.org/projects/ocaml-archive/}}:
+    The most comparable library to this effort, unfortunately not a complete
+    binding and only one single version ever released that binds an old version
+    of libarchive that is considered \enquote{legacy} by the libarchive
+    developers. Yet useful for transfering some ideas on how to bind the
+    library.
+\end{itemize}
+
+\subsection{Foreign function interface}
+\label{sec:ffi}
+
+\section{Low-level binding}
+\label{sec:lowlevel}
+
+\section{Functional streaming interface}
+\label{sec:functional}
 
 \chapter{Discussion}
 \label{sec:discussion}
