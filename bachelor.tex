@@ -341,6 +341,73 @@ that is usually expected from a compression library.
     implement the C binding.
 \end{itemize}
 
+\subsection{libarchive}
+\label{sec:libarchive}
+
+libarchive\footnote{\url{http://www.libarchive.org/}} is a library designed to
+handle all compression needs for low-level programming. It originated in the
+FreeBSD project but is also used by many other systems. One of the problems
+before libarchive was that different libraries like zlib (gzip) and libbz2
+(bz2) have different interfaces, so to add support for a particular format, the
+developer needed to do a tedious effort to add support manually. Also, some
+compression formats require container formats, e.g. the popular ZIP format
+consists of a format to bundle files which are in turn separately compressed
+using \enquote{deflate} and \enquote{store} algorithms. A similar case is the
+TAR (\enquote{Tape ARchive}) format popular on Unix which bundles files in one
+single file and usually gets compressed using a regular compressor. The TAR
+format does not have a canonical implementation -- there are separate
+implementations by the GNU project, the BSD project, in the Python Standard
+Library etc. Usually programmers have reimplement the format and its variants.
+
+Libarchive solves this by providing a common interface to two mechanisms:
+container formats, called \enquote{formats} in libarchive as well as
+compression formats, called \enquote{filters}. Not all formats that can be read
+can also be written, but the variety of options that libarchive supports is
+quite huge.
+
+Formats supported be libarchive include:
+
+\begin{itemize}
+  \item \emph{7z}, the compression format of 7-Zip
+  \item \emph{AR}, used for static libraries in Unix
+  \item \emph{CAB}, Microsoft cabinet files for installers, read-only support
+  \item \emph{CPIO}, initial ramdisk for booting a GNU/Linux system
+  \item \emph{ISO 9660}, CD-ROM image files
+  \item \emph{LHA}, popular compression format in Japan, read-only support
+  \item \emph{RAR}, compression format of WinRAR, read-only support
+  \item \emph{TAR}, typical file exchange format in Unix systems, with
+    \emph{ustar}, \emph{GNU} and \emph{PAX} variants supported.
+  \item \emph{XAR}, format used by the RPM5 package manager
+  \item \emph{ZIP}, most popular archive format
+\end{itemize}
+
+Apart from these formats libarchive also supports various compression filters:
+
+\begin{itemize}
+  \item \emph{bzip2}, popular alternative to \emph{gzip} with better compression
+  \item \emph{compress}, a mostly obsolete compression format (\inline{.Z})
+    used on Unix
+  \item \emph{grzip}
+  \item \emph{gzip}, a popular format with decent compression and decent speed
+  \item \emph{lrzip}
+  \item \emph{LZO}, an algorithm designed with very fast decompression in mind
+  \item \emph{RPM}, packages for the RPM package manager used in Fedora Linux,
+    openSUSE and a variety of other distributions
+  \item \emph{UU}, UUencode, a way to encode 8 bit data into printable ASCII
+    characters
+  \item \emph{XZ}, a compressor with good compression using the LZMA2 algorithm
+    from 7-Zip
+\end{itemize}
+
+In addition to the provided support, it is also possible to create own filters
+by registering external programs that libarchive will call and interface
+automatically, so creating new filters is very simple.
+
+libarchive also provides \inline{bsdtar}, a program with a command line
+interface similar to \inline{tar} but with support for all formats that
+libarchive supports, providing a consistent interface for handling all kinds of
+archive files from the command line.
+
 \subsection{Foreign function interface}
 \label{sec:ffi}
 
