@@ -16,6 +16,6 @@ all: logos
 watch:
 	$(MAKE) all
 	while true; do \
-		inotifywait -q -e modify *.tex *.bib ; \
+		inotifywait -q -e modify *.tex *.bib *.c ; \
 		$(MAKE) all ; \
 	done
