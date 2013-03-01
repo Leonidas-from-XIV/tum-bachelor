@@ -203,19 +203,22 @@ data from the user, \inline{stdout} for writing output to the user and
 \inline{FILE} is required and do not need to be saved to disk. Thus C has
 \emph{some} support for streaming data.
 
-TODO: add demonstration on how to read a file.
-
 \begin{listing}[H]
   \inputminted[linenos]{c}{readfile.c}
   \caption{Reading file line by line in C TODO \url{http://rosettacode.org/wiki/Read\_a\_file\_line\_by\_line\#C}}
   \label{lst:creadfile}
 \end{listing}
 
+Listing~\ref{lst:creadfile} shows how file I/O looks in C. One should note that
+this code is not portable C because it uses \inline{fgetln} which is only
+available in the C standard library on BSD systems. Yet the example demonstrates
+how the \inline{FILE} type is used.
+
 With a streaming API in place, there are a number of tasks that are a natural
 fit, for example compression of data. An uncompressed data stream gets in, a
 compressed stream comes out with the encryption function as a bleack box. Such
 compression algorithms exist since years and are very popular and common.
-Examples include gzip\footnote{TODO} and bzip2\footnote{TODO}, each tailored to
+Examples include gzip~\cite{rfc1952} and bzip2\footnote{TODO}, each tailored to
 different use cases: good compression ratio, fast decompression, good
 compression ratios on specific types of data etc.
 
@@ -285,7 +288,15 @@ these interfaces in custom types enables the standard Python syntax to use them
 just like every other type. In particular, lists support this interface but
 also strings and files as well.
 
-TODO: add code that implements an iterable
+\begin{listing}[H]
+  \inputminted[linenos]{python}{iterable.py}
+  \caption{An iterable in Python}
+  \label{lst:pyiterable}
+\end{listing}
+
+Listing~\ref{lst:pyiterable} shows a very simple implementation of an iterable
+object. The object returns values indefinitely, so just the first five are
+retrieved.
 
 Python also has additional syntactic support for so called \emph{generators}
 which are ordinary functions that use the \inline{yield} keyword instead of
