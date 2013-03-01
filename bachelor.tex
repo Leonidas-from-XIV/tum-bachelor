@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{csquotes}
+\usepackage{minted}
 
 % Define additional header fields
 \makeatletter
@@ -42,6 +43,8 @@
 \setmainfont{Linux Libertine O}
 \setsansfont{Linux Biolinum O}
 \setmonofont{Droid Sans Mono Dotted}
+
+\usemintedstyle{tango}
 
 \hypersetup{
 %	bookmarks=true,          % show bookmarks bar?
@@ -201,6 +204,12 @@ data from the user, \inline{stdout} for writing output to the user and
 \emph{some} support for streaming data.
 
 TODO: add demonstration on how to read a file.
+
+\begin{listing}[H]
+  \inputminted[linenos]{c}{readfile.c}
+  \caption{Reading file line by line in C TODO \url{http://rosettacode.org/wiki/Read\_a\_file\_line\_by\_line\#C}}
+  \label{lst:creadfile}
+\end{listing}
 
 With a streaming API in place, there are a number of tasks that are a natural
 fit, for example compression of data. An uncompressed data stream gets in, a
