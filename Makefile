@@ -11,7 +11,7 @@ in_tum.pdf:
 logos: in_tum.pdf tum.pdf
 
 all: logos
-	latexmk -pdf -pdflatex='lualatex -halt-on-error -shell-escape %O %S' bachelor.tex
+	latexmk bachelor.tex
 
 watch:
 	$(MAKE) all
