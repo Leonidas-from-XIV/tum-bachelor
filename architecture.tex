@@ -6,9 +6,7 @@
     draw=red!50!black!50,
     top color=white,
     bottom color=red!50!black!20,
-    inner sep=0em,
-    minimum width=17mm,
-    minimum height=2em
+    inner sep=0em
   },
  blueblock/.style={
     rectangle,
@@ -16,10 +14,7 @@
     draw=blue!50!black!50,
     top color=white,
     bottom color=blue!50!black!20,
-    inner sep=0em,
-    minimum width=17mm,
-    minimum height=2em,
-    text depth=0
+    inner sep=0em
   },
  greenblock/.style={
     rectangle,
@@ -28,50 +23,65 @@
     top color=white,
     bottom color=green!50!black!20,
     inner sep=0em,
-    minimum width=17mm,
-    minimum height=2em,
-    text depth=0
   },
-  testblock/.style={draw,inner sep=0mm}]
+  highlightlow/.style={
+    rectangle,
+    top color=violet!50!black!20,
+    bottom color=white,
+    inner sep=0.8em,
+  },
+  highlighthigh/.style={
+    rectangle,
+    top color=white,
+    bottom color=violet!50!black!20,
+    inner sep=0.8em,
+  },
+  testblock/.style={
+    draw,
+    inner sep=0mm
+  }]
       \matrix (table) [%
         minimum width = 18mm,
-        draw,
+        %draw,
         matrix of nodes,
         nodes in empty cells,
         row  sep=6mm,column sep=5mm
         ]{
-  & & & & \\
-  & & & & \\
-  & & & & \\
-  & & & & \\
+  & & & & & & \\
+  & & & & & & \\
+  & & & & & & \\
+  & & & & & & \\
   & & & & \\
   & & & & \\
  };
-  \node [testblock,fit=(table-1-1)(table-2-5),label={center:ostreamer}] {};
+  % highlight
+  \node [highlighthigh, fit=(table-1-1)(table-2-7)] {};
+  \node [highlightlow, fit=(table-3-1)(table-6-4)] {};
+  % level 1
+  \node [redblock,fit=(table-1-1)(table-2-7),label={center:ostreamer}] {};
   % level 2
-  \node [testblock,fit=(table-3-1)(table-4-4),label={center:libarchive}] {};
-  \node [testblock,fit=(table-3-5)(table-4-5),label={[text depth=0]center:gstreamer}]
- {};
+  \node [blueblock,fit=(table-3-1)(table-4-4),label={center:libarchive}] {};
+  \node [greenblock,fit=(table-3-5)(table-4-5),label={[text depth=0]center:gstreamer}] {};
+  \node [greenblock,fit=(table-3-6)(table-4-6),label={center:ocamlnet}] {};
+  \node [greenblock,fit=(table-3-7)(table-4-7),label={[text depth=0]center:pulseaudio}] {};
  % level 3
-  \node [testblock,fit=(table-5-1)(table-6-1),label={center:zlib}] {};
-  \node [testblock,fit=(table-5-2)(table-6-2),label={center:libbz2}] {};
-  \node [testblock,fit=(table-5-3)(table-6-3),label={center:liblzo}] {};
-  \node [testblock,fit=(table-5-4)(table-6-4),label={center:liblzma}] {};
-  \node [testblock,fit=(table-5-5)(table-6-5),label={[text depth=0]center:gstreamer}] {};
+  \node [blueblock,fit=(table-5-1)(table-6-1),label={center:zlib}] {};
+  \node [blueblock,fit=(table-5-2)(table-6-2),label={center:libbz2}] {};
+  \node [blueblock,fit=(table-5-3)(table-6-3),label={center:liblzo}] {};
+  \node [blueblock,fit=(table-5-4)(table-6-4),label={center:liblzma}] {};
+  \node [blueblock,fit=(table-5-5)(table-6-5),label={[text depth=0]center:gstreamer}] {};
   \begin{scope}
-  \draw[->,very thick] (table-2-1) -- (table-3-1);
+  % level 2
+  \draw[->,very thick] (table-2-3) -- (table-3-3);
+  \draw[->,very thick] (table-2-5) -- (table-3-5);
+  \draw[->,very thick] (table-2-6) -- (table-3-6);
+  \draw[->,very thick] (table-2-7) -- (table-3-7);
+  % level 3
+  \draw[->,very thick] (table-4-1) -- (table-5-1);
+  \draw[->,very thick] (table-4-2) -- (table-5-2);
+  \draw[->,very thick] (table-4-3) -- (table-5-3);
+  \draw[->,very thick] (table-4-4) -- (table-5-4);
+  \draw[->,very thick] (table-4-5) -- (table-5-5);
   \end{scope}
-
-  \draw (1,3) node[redblock] {ostreamer};
-  \draw (1,2) node[blueblock] {libarchive};
-  \draw (2,2) node[greenblock] {gstreamer};
-  \draw (3,2) node[greenblock] {ocamlnet};
-  \draw (4,2) node[greenblock] {cow};
-  \draw (1,1) node[blueblock] {zlib};
-  \draw (2,1) node[blueblock] {libbz2};
-  \draw (3,1) node[blueblock] {liblzo};
-  \draw (4,1) node[blueblock] {liblzma};
-  \draw (5,1) node[blueblock] {gstreamer};
-
 \end{tikzpicture}
 % http://tex.stackexchange.com/questions/94343/matrix-of-nodes-over-multiple-columns-in-tikz
