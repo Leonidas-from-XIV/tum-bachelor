@@ -72,6 +72,7 @@
 %	urlbordercolo={0 1 1}    % color of frame around URL links (if colorlinks=false)
 }
 
+\providecommand*{\listingautorefname}{Listing}
 \hyphenation{lib-ar-chi-ve}
 
 \begin{document}
@@ -212,7 +213,7 @@ data from the user, \inline{stdout} for writing output to the user and
   \label{lst:creadfile}
 \end{listing}
 
-Listing~\ref{lst:creadfile} shows how file I/O looks in C. One should note that
+\autoref{lst:creadfile} shows how file I/O looks in C. One should note that
 this code is not portable C because it uses \inline{fgetln} which is only
 available in the C standard library on BSD systems. Yet the example demonstrates
 how the \inline{FILE} type is used.
@@ -259,7 +260,7 @@ called Java 5} did not have any syntactic support for iteration, so the
 canonical way was to use a \inline{for}-loop and call the \inline{iterator}
 method on objects that support the \inline{Iterable} interface. This method
 returns an object that implements the \inline{Iterator} interface, like shown
-in Listing~\ref{lst:jiter}.
+in \autoref{lst:jiter}.
 
 \begin{listing}[H]
   \begin{minted}[linenos]{c}
@@ -280,7 +281,7 @@ remove the last element of the collection over which the iterator is iterating.
 
 Java 1.5 extended the \inline{for}-loop to do the iterator management
 automatically, which does the creation of the iterator automatically, as in
-Listing~\ref{lst:jiter5}.
+\autoref{lst:jiter5}.
 
 \begin{listing}[H]
   \begin{minted}[linenos]{c}
@@ -346,7 +347,7 @@ also strings and files as well.
   \label{lst:pyiterable}
 \end{listing}
 
-Listing~\ref{lst:pyiterable} shows a very simple implementation of an iterable
+\autoref{lst:pyiterable} shows a very simple implementation of an iterable
 object. The object returns values indefinitely, so just the first five are
 retrieved.
 
@@ -358,7 +359,7 @@ function to resume and run until the next \inline{yield} is reached.  Reaching
 the end of the function or a \inline{return} statement causes a
 \inline{StopIteration} exception being thrown. This exception is interpreted by
 the \inline{for} loop as end-marker, thus stopping to iterate over the
-generator. Listing~\ref{lst:pygenerator} shows a simple generator in action.
+generator. \autoref{lst:pygenerator} demonstrates a simple generator in action.
 
 \begin{listing}[H]
   \inputminted[linenos]{python}{generator.py}
@@ -400,7 +401,7 @@ number of the file etc.
 reference to a file but the file to be used is not on a local file system and
 cannot be opened using \inline{open}. Examples of such files include files in
 archives like a text-file inside a ZIP archive or remote files like a file on a
-HTTP server. Listing~\ref{lst:pyremote} creates such a \enquote{file-like}
+HTTP server. \autoref{lst:pyremote} creates such a \enquote{file-like}
 object, which can be processed by most functions that expect to work with
 files.
 
