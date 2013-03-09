@@ -245,6 +245,55 @@ and do not suffer duplication of efforts.
 \section{Java}
 \label{sec:java}
 
+The Java programming language is an imperative object-oriented language with
+support for classes as well as formal interfaces for classes to implement. In
+this context, it is interesting to see how Java handles streams and iteration
+as these concepts are tightly interlocked.
+
+\subsection{Iterable}
+\label{sec:jiterable}
+
+\enquote{Classic} Java, that is Java before version 1.5\footnote{Sometimes
+called Java 5} did not have any syntactic support for iteration, so the
+canonical way was to use a \inline{for}-loop and call the \inline{iterator}
+method on objects that support the \inline{Iterable} interface. This method
+returns an object that implements the \inline{Iterator} interface, like shown
+in Listing~\ref{lst:jiter}.
+
+\begin{listing}[H]
+  \begin{minted}[linenos]{c}
+for (Iterator<TimerTask> i = collection.iterator(); i.hasNext(); ) {
+    i.next().cancel();
+}
+  \end{minted}
+  \caption{Classic iteration without syntactic sugar}
+  \label{lst:jiter}
+\end{listing}
+
+% TODO: source http://docs.oracle.com/javase/1.5.0/docs/guide/language/foreach.html
+
+The \inline{Iterator} interface defines three methods: \inline{hasNext} to
+determine whether the end of the iterator was reached, \inline{next} to return
+the next element of the iterator and an optional method \inline{remove} to
+remove the last element of the collection over which the iterator is iterating.
+
+Java 1.5 extended the \inline{for}-loop to do the iterator management
+automatically, which does the creation of the iterator automatically, as in
+Listing~\ref{lst:jiter5}.
+
+\begin{listing}[H]
+  \begin{minted}[linenos]{c}
+for (TimerTask t : collection) {
+    t.cancel();
+}
+  \end{minted}
+  \caption{Java 1.5-style iteration with syntactic sugar}
+  \label{lst:jiter5}
+\end{listing}
+
+\subsection{I/O Streams}
+\label{sec:jio}
+
 \section{Python}
 \label{sec:python}
 
