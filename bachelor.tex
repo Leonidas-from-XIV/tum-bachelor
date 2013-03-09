@@ -6,6 +6,7 @@
 \usepackage{csquotes}
 \usepackage{minted}
 \usepackage{tikz}
+\usepackage{chngcntr}
 \usepackage[normalem]{ulem}
 
 % red underline, nice for correction things
@@ -35,6 +36,10 @@
 \newcommand\location[1]{\renewcommand\@location{#1}}
 \newcommand\@location{\@latex@error{No \noexpand\location given}\@ehc}
 \makeatother
+
+% do not restart counters on every chapter
+% provided by the chngcntr package
+\counterwithout{footnote}{chapter}
 
 \newcommand\inline[1]{{\addfontfeature{Letters=SmallCaps}#1}}
 
