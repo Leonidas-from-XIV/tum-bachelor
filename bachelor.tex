@@ -93,7 +93,7 @@
 \addcontentsline{toc}{chapter}{Abstract}
 \begin{abstract}
 	\subsubsection*{\abstractname}
-	Bla bla bla
+	TODO
 \end{abstract}
 
 \tableofcontents
@@ -428,16 +428,57 @@ this interface.
 \chapter{Implementation}
 \label{sec:implementation}
 
+Implementing a functional streaming API in specifically in OCaml has a couple
+of advantages. OCaml enables type-safe development which is useful for
+environments where the reliability of software is crucial and having code that
+can be proven correct by the type inference is a big advantage. Although it
+does not obsolete thorough unit testing, a type-safe language can provide some
+amount of extra security.
+
+The OCaml compiler can generate byte-code as well as native code for a range of
+platforms\footnote{The Debian project lists AMD64, ARM, x86, Itanium, MIPS,
+PowerPC, S390 and SPARC as supported platforms, see
+\url{http://packages.debian.org/squeeze/ocaml}} and is well known for
+well-performing code. Thus the choice of OCaml as an implementation language is
+obvious.
+
+A recent advance in the OCaml community has been the introduction of OPAM, a
+package manager along with a catalogue of packages available for programmers.
+OPAM can be roughly compared to systems like the CPAN for Perl, the Python
+Package Index (PyPI) as well as the CTAN for \LaTeX. This development was made
+possible by the convergence to a common package description tool, OASIS. OASIS
+defines a format to describe package metainformation like name, version number,
+short description as well as instruction on how to build it. The concept of
+OASIS can be compared roughly to build tools like GNU autotools or CMake and
+also Cabal for Haskell.
+
+Experience has shown that much software developed in university context has
+received poor reception in the open software community. Often this has not been
+the case because the software was not \emph{useful}, but the state of said
+software was easy enough to use for other non-university programmers.
+
+As such, while implementing this software, great care has been exercised to
+adhere to current OCaml community practices, so potential users and
+contributors will not be put off by idiosyncracies of software developed in
+isolation. This means that the software will use OASIS and the finished package
+will be available in the OPAM package directory under a Free Software license.
+
 \section{Architecture}
 \label{sec:architecture}
 
-The architecture of the system is shown in \autoref{fig:architecture} TODO.
+As outlined before, implementing everything from scratch would take long time
+and be quite useless, therefore OStreamer uses existing code, extending it
+where possible. An overview of the system architecture is provided by
+\autoref{fig:architecture}.
 
-TODO: TikZ picture
 \begin{figure}[h]
   \centering
   \input{architecture}
-  \caption{TODO}
+  \caption{High-level view of system architecture. The lowest level are usually
+    C~libraries that provide functionality, the middle-tier are wrapper
+    libraries. OStreamer is on the highest level, providing a universal interface
+    to these libraries. The highlighted part is implemented, the rest are
+    possible extensions.}
   \label{fig:architecture}
 \end{figure}
 
