@@ -71,6 +71,8 @@
 %	urlbordercolo={0 1 1}    % color of frame around URL links (if colorlinks=false)
 }
 
+\hyphenation{lib-ar-chi-ve}
+
 \begin{document}
 
 \input{cover}
@@ -299,17 +301,70 @@ object. The object returns values indefinitely, so just the first five are
 retrieved.
 
 Python also has additional syntactic support for so called \emph{generators}
-which are ordinary functions that use the \inline{yield} keyword instead of
-the \inline{return} keyword. This causes the functions return value to turn
-into an iterable, return the value and suspend. Each element of the iterable
-causes the function to resume and run until the next \inline{yield} is reached.
-Reaching the end of the function or a \inline{return} statement causes a
-\inline{StopIteration} exception being thrown.
+which are ordinary functions that use the \inline{yield} keyword instead of the
+\inline{return} keyword. This causes the functions return value to turn into an
+iterable, return the value and suspend. Each element of the iterable causes the
+function to resume and run until the next \inline{yield} is reached.  Reaching
+the end of the function or a \inline{return} statement causes a
+\inline{StopIteration} exception being thrown. This exception is interpreted by
+the \inline{for} loop as end-marker, thus stopping to iterate over the
+generator. Listing~\ref{lst:pygenerator} shows a simple generator in action.
 
-TODO: demonstrate generator
+\begin{listing}[H]
+  \inputminted[linenos]{python}{generator.py}
+  \caption{A simple generator}
+  \label{lst:pygenerator}
+\end{listing}
+
+Python's support for generators goes even further by making it possible to pass
+values into a function that was suspended when it reached a \inline{yield}
+keyword, although the details and syntactic extensions of Python generators are
+outside of the scope of discussion.
 
 \subsection{File-like objects}
 \label{sec:pyfile}
+
+A very useful concept in Python is the so-called \enquote{file-like object}.
+\enquote{file-like} objects are a simple abstraction of a file in the
+filesystem, similar to C's \inline{FILE} data type. Unlike C,
+\enquote{file-like} objects don't need to be of any specific type but are
+required to provide a specific interface in a duck-typing manner.
+
+The first \enquote{file-like object} in Python was the object returned by the
+function \inline{open} which returns a reference to an open file, similar to
+\inline{fopen} in C. The type of this object is \inline{file} which explains
+the naming of \enquote{file-like} objects.
+
+A \enquote{file-like} object usually provides a minimal interface of a
+\inline{read} method for files that are meant for reading and \inline{write}
+for files that are meant for writing. \inline{read} takes an optional integer
+parameter which specifies how many bytes to read at maximum, whereas the
+default is to read the data until the end. The write method takes a
+string\footnote{Python 2.x uses the \inline{str}-bytestring type, Python 3.x
+uses either the \inline{str} Unicode string type or \inline{bytes} type} and
+writes it to the file. The interface is very simple but for real files it can
+also be extended by adding methods to seek inside of a file, getting the inode
+number of the file etc.
+
+\enquote{file-like} objects are very useful to deal with code that requires a
+reference to a file but the file to be used is not on a local file system and
+cannot be opened using \inline{open}. Examples of such files include files in
+archives like a text-file inside a ZIP archive or remote files like a file on a
+HTTP server. Listing~\ref{lst:pyremote} creates such a \enquote{file-like}
+object, which can be processed by most functions that expect to work with
+files.
+
+\begin{listing}[H]
+  \inputminted[linenos]{python}{remote.py}
+  \caption{A \enquote{file-like object} from a URL}
+  \label{lst:pyremote}
+\end{listing}
+
+Iteration semantics over a \enquote{file-like} object are not defined by the
+interface, but iteration over proper \enquote{file} objects causes Python to
+iterate over the lines in a lazy fashion: each line is only read on demand and
+discarded afterwards. This enables Python to read files of arbitrary size using
+this interface.
 
 \chapter{Implementation}
 \label{sec:implementation}
@@ -415,7 +470,7 @@ Apart from these formats libarchive also supports various compression filters:
     openSUSE and a variety of other distributions
   \item \emph{UU}, UUencode, a way to encode 8 bit data into printable ASCII
     characters
-  \item \emph{XZ}, a compressor with good compression using the LZMA2 algorithm
+  \item \emph{XZ}, a compressor with high compression using the LZMA2 algorithm
     from 7-Zip
 \end{itemize}
 
