@@ -1,34 +1,48 @@
-\usetikzlibrary{positioning,fit}
+\usetikzlibrary{positioning,fit,matrix}
 \begin{tikzpicture}[
-  phantom/.style={
-    rectangle,
-    draw=red,
-    text width=6em,
-    %inner sep=1em,
-    outer sep=0em,
-    minimum height=2em
-  },
-  block/.style={
+  redblock/.style={
     rectangle,
     very thick,
     draw=red!50!black!50,
     top color=white,
     bottom color=red!50!black!20,
-    text width=6em,
-    %inner sep=1em,
-    outer sep=0em,
-    minimum height=2em,
-    text centered
+    inner sep=0em,
+    minimum width=17mm,
+    minimum height=2em
   },
-  blockn/.style ={rectangle,text width=6em,draw,minimum height=3em, outer sep=0pt},
-  phantomn/.style ={rectangle,text width=6em,minimum height=3em, outer sep=0pt}]
-  \matrix[column sep=1em, row sep=1em]
- {
-  % first row
-  \node[phantom] (ost0) {}; & \node[phantom] (ost1) {}; \\
-  % second row
-  \node[block] (libarchive) [] {libarchive}; & \node[block] (other) [] {other}; \\
-  };
-  \node[block] (ostreamer) [fit=(ost0) (ost1)] {ostreamer};
+ blueblock/.style={
+    rectangle,
+    very thick,
+    draw=blue!50!black!50,
+    top color=white,
+    bottom color=blue!50!black!20,
+    inner sep=0em,
+    minimum width=17mm,
+    minimum height=2em
+  },
+ greenblock/.style={
+    rectangle,
+    very thick,
+    draw=green!50!black!50,
+    top color=white,
+    bottom color=green!50!black!20,
+    inner sep=0em,
+    minimum width=17mm,
+    minimum height=2em
+  }]
+  \matrix (table) [
+    %draw
+    matrix of nodes,
+    nodes in empty cells,
+    row sep=4mm,
+    column sep = 15mm,
+   nodes={text centered}] {
+   & & & \\
+   & & & \\
+   & & & \\
+   };
+  \node[fit=(table-1-1)(table-1-4),redblock,label={center:ostreamer}]{};
+  \node[fit=(table-3-1)(table-3-2),blueblock,label={center:libarchive}] {};
+  \node[fit=(table-3-3)(table-3-4),greenblock,label={center:other}] {};
 \end{tikzpicture}
-% http://tex.stackexchange.com/questions/58048/tikz-node-covering-several-columns
+% http://tex.stackexchange.com/questions/94343/matrix-of-nodes-over-multiple-columns-in-tikz
