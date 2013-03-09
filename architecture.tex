@@ -1,3 +1,4 @@
+\usetikzlibrary{positioning}
 \begin{tikzpicture}[
   clib/.style={
     rectangle,
@@ -12,6 +13,6 @@
   %\draw (2.5, 0.5) node {libarchive};
   %\draw (6,0) rectangle (7,1);
   %\draw (0,2) rectangle (7,3);
-  \node[clib] {libarchive};
-  %\node[clib] {ostreamer};
+  \node (libarchive) [clib] {libarchive};
+  \node (ostreamer) [clib,above=of libarchive] {ostreamer};
 \end{tikzpicture}
