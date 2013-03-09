@@ -24,16 +24,18 @@
     bottom color=green!50!black!20,
     inner sep=0em,
   },
-  highlightlow/.style={
-    rectangle,
-    top color=orange!50,
-    bottom color=orange!10,
-    inner sep=0.8em,
-  },
-  highlighthigh/.style={
+  highlight/.style={
     rectangle,
     top color=orange!10,
-    bottom color=orange!50,
+    bottom color=orange!10,
+    % middle color goes last
+    middle color=orange!50,
+    inner sep=0.8em,
+  },
+  nohighlight/.style={
+    rectangle,
+    top color=white,
+    bottom color=white,
     inner sep=0.8em,
   },
   testblock/.style={
@@ -51,12 +53,12 @@
   & & & & & & \\
   & & & & & & \\
   & & & & & & \\
-  & & & & \\
-  & & & & \\
+  & & & & & & \\
+  & & & & & & \\
  };
   % highlight
-  \node [highlighthigh, fit=(table-1-1)(table-2-7)] {};
-  \node [highlightlow, fit=(table-3-1)(table-6-4)] {};
+  \node [highlight, fit=(table-1-1)(table-6-7)] {};
+  \node [nohighlight, fit=(table-3-5)(table-6-7)] {};
   % level 1
   \node [redblock,fit=(table-1-1)(table-2-7),label={center:ostreamer}] {};
   % level 2
