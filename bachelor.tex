@@ -6,6 +6,14 @@
 \usepackage{csquotes}
 \usepackage{minted}
 \usepackage{tikz}
+\usepackage{ulem}
+
+% red underline, nice for correction things
+% http://tex.stackexchange.com/questions/7321/how-to-color-just-the-wave-produced-by-the-ulem-package
+\makeatletter
+\def\uwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{red}{\char58}}}\ULon}
+\font\sixly=lasy6 % does not re-load if already loaded, so no memory problem.
+\makeatother
 
 % Define additional header fields
 \makeatletter
