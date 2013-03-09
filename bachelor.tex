@@ -521,9 +521,10 @@ Apart from these formats libarchive also supports various compression filters:
   \item \emph{bzip2}, popular alternative to \emph{gzip} with better compression
   \item \emph{compress}, a mostly obsolete compression format (\inline{.Z})
     used on Unix
-  \item \emph{grzip}
+  \item \emph{grzip}, a compressor that applies special preprocessing
   \item \emph{gzip}, a popular format with decent compression and decent speed
-  \item \emph{lrzip}
+  \item \emph{lrzip}, compressor with multiple compression backends (LZMA, ZPAQ,
+    LZO, gzip, bzip2)
   \item \emph{LZO}, an algorithm designed with very fast decompression in mind
   \item \emph{RPM}, packages for the RPM package manager used in Fedora Linux,
     openSUSE and a variety of other distributions
