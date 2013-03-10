@@ -235,20 +235,21 @@ With a streaming API in place, there are a number of tasks that are a natural
 fit, for example compression of data. An uncompressed data stream gets in, a
 compressed stream comes out with the encryption function as a bleack box. Such
 compression algorithms exist since years and are very popular and common.
-Examples include gzip~\cite{rfc1952} and bzip2\footnote{TODO}, each tailored to
-different use cases: good compression ratio, fast decompression, good
-compression ratios on specific types of data etc.
+Examples include gzip~\cite{rfc1952} and
+bzip2\footnote{\url{http://bzip.org/}}, each tailored to different use cases:
+good compression ratio, fast decompression, good compression ratios on specific
+types of data etc.
 
 Libraries for these algorithms are implemented most of the time in C
 (\inline{zlib} for gzip, \inline{libbz2} for bzip2) or at least have an
 interface to be used from C (LZMA reference implementation\footnote{7-Zip
-project, TODO}), therefore giving implementers in C a wide variety to choose
-from. Unfortunately, these libraries all provide different APIs, so just
-switching the compression algorithm from gzip to bzip2 is not very convenient.
-This problem can be solved with libarchive\footnote{TODO}, a wrapper around a
-huge amount of different compression libraries. Furthermore, libarchive
-provides implementations of common container formats like \inline{TAR} or
-\inline{ZIP}.
+project, \url{http://www.7-zip.org/}}), therefore giving implementers in C a
+wide variety to choose from. Unfortunately, these libraries all provide
+different APIs, so just switching the compression algorithm from gzip to bzip2
+is not very convenient.  This problem can be solved with
+libarchive\footnote{\url{http://www.libarchive.org}}, a wrapper around a huge
+amount of different compression libraries. Furthermore, libarchive provides
+implementations of common container formats like \inline{TAR} or \inline{ZIP}.
 
 For this bachelor's thesis, implementing compression algorithms is
 out-of-scope, so using libarchive as a way to implement compression
@@ -294,7 +295,10 @@ remove the last element of the collection over which the iterator is iterating.
 
 Java 1.5 extended the \inline{for}-loop to do the iterator management
 automatically, which does the creation of the iterator automatically, as in
-\autoref{lst:jiter5}.
+\autoref{lst:jiter5}. With the addition of generics in Java 1.5, the
+\inline{next} method was changed to return an element of the containing type
+instead of an Object that needed to be cast to the desired type, thus improving
+type safety.
 
 \begin{listing}[H]
   \begin{minted}[linenos]{c}
@@ -317,9 +321,6 @@ and enjoying constant improvement. It has seen rising adoption in the last few
 years in scientific communities as well as for web development. Much of this
 apotion can be attributed to the simplicity of the language and the thriving
 ecosystem.
-
-Contrasted to Java, Pythons solution to problems tend to fall on the more
-pragmatic side. TODO
 
 One important concept in Python is so called
 \emph{duck-typing}\footnote{\emph{If it walks like a duck, if it quacks like a
