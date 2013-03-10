@@ -597,6 +597,52 @@ interface similar to \inline{tar} but with support for all formats that
 libarchive supports, providing a consistent interface for handling all kinds of
 archive files from the command line.
 
+When trying to read files that are not in a specific container format,
+libarchive uses the so-called \enquote{raw} format, which just runs a filter.
+This is useful to decompress files that are just processed with e.g. gzip but
+not in a tar file. During implementation it turned out that there was only a
+format for \emph{reading} raw files, but \emph{writing} these was not possible.
+
+A patch for libarchive was written to add such a filter and submitted to the
+upstream author. After a number of revisions on functionality and code style \&
+conventions, the patch was added to the upstream version of libarchive,
+together with unit tests.
+
+Adding new formats to libarchive is essentially simple, since it provides hooks
+for implementing own formats. \autoref{lst:archiveformat} sets these hooks in
+the lines 14 to 23. Not implemented hooks are not used, although another bug
+with handling unset (\inline{NULL}) callbacks, for which another patch was
+created and submitted to the upstream author.
+
+\begin{listing}[h]
+  \inputminted[linenos,fontsize=\small]{c}{archive-set-format.c}
+  \caption{Initializing a format}
+  \label{lst:archiveformat}
+\end{listing}
+
+Special care was taken in the raw format to only allow one file entry to be
+written to the archive, as \autoref{lst:archiveheader} demonstrates. This entry
+also gets limited to be a regular file, since other file types do not make
+sense.
+
+\begin{listing}[h]
+  \inputminted[linenos,fontsize=\small]{c}{archive-write-header.c}
+  \caption{Checks for file type and number of files attempted to write}
+  \label{lst:archiveheader}
+\end{listing}
+
+Writing the raw data is the simplest part, evidenced by
+\autoref{lst:archivedata}.
+
+\begin{listing}[h]
+  \inputminted[linenos,fontsize=\small]{c}{archive-write-data.c}
+  \caption{Writing data into a \enquote{raw} format file}
+  \label{lst:archivedata}
+\end{listing}
+
+With this functionality available, an OCaml wrapper on top of libarchive can be
+constructed.
+
 \subsection{Foreign function interface}
 \label{sec:ffi}
 
