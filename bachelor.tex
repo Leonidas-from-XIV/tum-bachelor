@@ -7,6 +7,7 @@
 \usepackage{minted}
 \usepackage{tikz}
 \usepackage{chngcntr}
+\usepackage{amstext}
 \usepackage[normalem]{ulem}
 
 % red underline, nice for correction things
@@ -649,6 +650,70 @@ constructed.
 
 \section{Low-level binding}
 \label{sec:lowlevel}
+
+\subsection{Memory allocator}
+\label{sec:allocator}
+
+For writing out compressed data, libarchive supports a number of modes:
+
+\begin{itemize}
+  \item Writing to a file
+  \item Writing to a file descriptor
+  \item Writing to a memory buffer
+  \item A custom function
+\end{itemize}
+
+These functions are very useful when writing code directly using the C API,
+since writing to file and to file descriptors saves the programmer from having
+to do anything besides opening a file or file descriptor and libarchive handles
+writing out the data itself. Unfortunately, these modes cannot be used for a
+stream interface, since at the point of writing the compressed data, it is not
+yet known what to do with the data: save it to a file or maybe stream it
+through a socket to some remote computer. In the latter case, saving the data
+to disk would serve no point.
+
+Therefore, the stream interface in this library needs libarchive to write the
+compressed data into memory. libarchive also provides such a function,
+unfortunately this function saves into a \emph{fixed} memory buffer. This
+creates a number of problems since it is not known how big an archive that is
+produced by libarchive will be. It might turn out very small on efficient
+compression, e.g. text, in which case a fixed buffer is not used and lot of
+memory is wasted. On the other hand, when compressing already compressed data
+like compressed music or movies, it might turn out even larger than before,
+thus overflowing a buffer.
+
+To prevent overflows yet using the memory efficiently, the wrapper code in this
+thesis uses a smarter approach: the buffer is resized while writing the
+archive. There are distinct goals that are to be optimized:
+
+\begin{enumerate}
+  \item Safety: The buffer should never overflow as this causes memory
+    corruption which leads to incorrect behaviour and security problems
+  \item Resource-saving: The buffer should not waste unnecessary memory
+  \item Efficiency: Due to how memory allocation works, a minimal number
+    of resize operations are desirable, since each resize might require
+    to copy previous contents of the buffer
+\end{enumerate}
+
+Before each write, the buffer is checked to make sure there is enough space
+left in the buffer to save the data. The goal of being resource friendly would
+be fulfilled by resizing the buffer to the desired size to fit the data, but
+this will cause many resize operations. As a measure against this, the buffer
+gets resized using an empiric formula:
+
+\begin{displaymath}
+\text{new\_length} = \lfloor 1.5 \times \text{current\_length} \rfloor
+\end{displaymath}
+
+This factor is a compromise between memory-usage and number of allocations. If
+the buffer required is small, it will not waste much memory, if the buffer
+required is huge, there will be less resize operations required. In addition,
+the initial buffer size is $4096$~byte, to prevent lots of small resize
+operations at the beginning. After each new size calculation, the new buffer
+size is sanity-checked whether it really fits the new data.
+
+The simple algorithm used prevents excessive resizes while minimizing memory
+usage.
 
 \section{Functional streaming interface}
 \label{sec:functional}
