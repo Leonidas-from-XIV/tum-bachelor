@@ -668,6 +668,35 @@ and return to the OCaml code.
 \section{Low-level binding}
 \label{sec:lowlevel}
 
+The lowest-level binding code for this thesis creates an OCaml wrapper for
+libarchive what is very similar to the C API of libarchive. This means the
+wrapper code in C only does conversion between OCaml and C values as shown in
+\autoref{lst:simplewrap} and provides a very un-functional interface to OCaml,
+like in \autoref{lst:simpletype} which mimics the C API.
+
+This approach was chosen to keep as much as possible of the binding in OCaml
+code and allow the creation of a higher level binding. The higher level binding
+can be written in imperative-style OCaml code.
+
+\begin{listing}[h]
+  \inputminted[linenos]{c}{simple-wrap.c}
+  \caption{A very simple function from libarchive, wrapped using the OCaml FFI}
+  \label{lst:simplewrap}
+\end{listing}
+
+\begin{listing}[h]
+  \inputminted[linenos]{ocaml}{simple-wrap.ml}
+  \caption{OCaml type definition for \autoref{lst:simplewrap}}
+  \label{lst:simpletype}
+\end{listing}
+
+One advantage of the low level binding is that despite being low-level, it
+introduces some additional type safety. In C and libarchive it is usual for a
+function to return an exit code from a function to determine whether execution
+was successful or not. libarchive usually returns an integer value whereas the
+low-level binding maps the resulting value into a union type, so errors from
+libarchive do not go undetected.
+
 \subsection{Memory allocator}
 \label{sec:allocator}
 
