@@ -648,6 +648,23 @@ constructed.
 \subsection{Foreign function interface}
 \label{sec:ffi}
 
+The OCaml compiler supports extending the functionality of the language not
+only by writing OCaml code but it also allows to interoperate with C code. This
+functionality is crucial to integrate with external systems which often export
+their functionality as C libraries.
+
+This functionality is called a \enquote{foreign function interface} (FFI). In
+the case of OCaml, the language has a special construct to declare
+\enquote{external} functions by giving them an OCaml name, an OCaml type
+signature and a C name as string. The function name has to be equal to a
+function in C that gets compiled together with the OCaml code.
+
+From the C perspecitve, OCaml values have the type \inline{value} (defined in
+the OCaml include files) and can be converted to and from using a set of C
+macros. This allows to create wrapper functions that extract the C values from
+the OCaml values, call the C functions, pack their results into OCaml values
+and return to the OCaml code.
+
 \section{Low-level binding}
 \label{sec:lowlevel}
 
