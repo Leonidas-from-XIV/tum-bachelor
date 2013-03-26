@@ -1,3 +1,6 @@
+all: logos
+	latexmk bachelor.tex
+
 tum.pdf:
 	gs -sDEVICE=pdfwrite -sOutputFile=tum_full.pdf -dBATCH -dNOPAUSE uni.tum.ps
 	pdfcrop --luatex tum_full.pdf tum.pdf
@@ -9,9 +12,6 @@ in_tum.pdf:
 	rm in_tum_full.pdf
 
 logos: in_tum.pdf tum.pdf
-
-all: logos
-	latexmk bachelor.tex
 
 watch:
 	$(MAKE) all
