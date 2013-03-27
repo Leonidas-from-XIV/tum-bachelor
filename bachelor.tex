@@ -824,6 +824,10 @@ exposed in the signature but rather hidden in the implementation, as
 \autoref{lst:phantom} shows. This causes the OCaml compiler to prohibit calling
 a function with an incorrect phantom type~\cite{rwmj2008}. The code sample
 introduces new polymorphic variant types to implement additional annotations.
+The code in \autoref{lst:phantom} adds an annotation in float types on which
+unit the float value represents and prevents programmers from mixing meters
+with feet, an error that can be easily done and is hard to detect.
+
 In the same fashion, the OCaml libarchive binding uses polymorphic variants
 types to annotate the signatures with the state of the handle (\inline{Open},
 \inline{Empty}, \inline{Populated}, \inline{Closed}) as shown in
@@ -840,6 +844,40 @@ caught by the compiler.
   \inputminted[linenos]{ocaml}{signatures.ml}
   \caption{OCaml signatures of the libarchive binding}
   \label{lst:phantomsigs}
+\end{listing}
+
+\subsection{Error monad}
+\label{sec:errormonad}
+
+\autoref{lst:phantomsigs} shows another feature of the functional OCaml
+interface: the error reporting. OCaml supports a number of ways to deal with
+failed execution. One of these mechanisms is exceptions, unfortunately
+exceptions don't mix too well with functional code. OCaml also comes with an
+\inline{Option} type, which can represent a success with \inline{Some} and a
+value as well as failure with \inline{None}. This mechanism mirrors the
+\inline{Maybe} monad in Haskell. As far as the success case is concerned, the
+\inline{Option} type is fine, but when an error occurs, it would be good if the
+failure state were able to pass some information to the programmer what the
+actual error was instead of just swallowing it.
+
+In Haskell the logical extension of the \inline{Maybe} monad is the
+\inline{Error} monad and creating such a data type in OCaml is very
+simple~\cite{bh2007}. Using the \inline{Error} monad in OCaml it is very easy
+to write code in a sequential way and match the result with pattern matching to
+either get the desired data or retrieve the error message.
+
+The way it is used, the programmer just chains calls to the binding. If
+everything worked correctly, the result is \inline{Success} with the correct
+data, or \inline{Failure} otherwise. In case some immediate computation failed,
+the \inline{Failure} state just propagates through the chain and can be matched
+at the end. \autoref{lst:error} shows the complete implementation of the data
+type. The failure case returns both the error code from libarchive as well as
+the error string that libarchive emits.
+
+\begin{listing}[H]
+  \inputminted[linenos]{ocaml}{error.ml}
+  \caption{Implementation of the \inline{Error} monad}
+  \label{lst:error}
 \end{listing}
 
 \section{Functional streaming interface}
