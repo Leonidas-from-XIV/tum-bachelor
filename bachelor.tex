@@ -819,7 +819,28 @@ reading from an archive without feeding the compressed archive to the handle
 and wondered why nothing was happening}. This is where OCaml phantom types are
 useful.
 
-TODO
+Phantom types are called \enquote{phantom} because the actual types are not
+exposed in the signature but rather hidden in the implementation, as
+\autoref{lst:phantom} shows. This causes the OCaml compiler to prohibit calling
+a function with an incorrect phantom type~\cite{rwmj2008}. The code sample
+introduces new polymorphic variant types to implement additional annotations.
+In the same fashion, the OCaml libarchive binding uses polymorphic variants
+types to annotate the signatures with the state of the handle (\inline{Open},
+\inline{Empty}, \inline{Populated}, \inline{Closed}) as shown in
+\autoref{lst:phantomsigs} so using the handles in an invalid way is already
+caught by the compiler.
+
+\begin{listing}[H]
+  \inputminted[linenos]{ocaml}{phantom.ml}
+  \caption{A simple example of phantom types~\cite{rwmj2008}}
+  \label{lst:phantom}
+\end{listing}
+
+\begin{listing}[H]
+  \inputminted[linenos]{ocaml}{signatures.ml}
+  \caption{OCaml signatures of the libarchive binding}
+  \label{lst:phantomsigs}
+\end{listing}
 
 \section{Functional streaming interface}
 \label{sec:functional}
