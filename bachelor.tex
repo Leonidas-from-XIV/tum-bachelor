@@ -314,6 +314,8 @@ for (TimerTask t : collection) {
 \subsection{I/O Streams}
 \label{sec:jio}
 
+TODO
+
 \section{Python}
 \label{sec:python}
 
@@ -823,10 +825,11 @@ Phantom types are called \enquote{phantom} because the actual types are not
 exposed in the signature but rather hidden in the implementation, as
 \autoref{lst:phantom} shows. This causes the OCaml compiler to prohibit calling
 a function with an incorrect phantom type~\cite{rwmj2008}. The code sample
-introduces new polymorphic variant types to implement additional annotations.
-The code in \autoref{lst:phantom} adds an annotation in float types on which
-unit the float value represents and prevents programmers from mixing meters
-with feet, an error that can be easily done and is hard to detect.
+introduces new polymorphic variant types~\cite{ocamlmanual} to implement
+additional annotations.  The code in \autoref{lst:phantom} adds an annotation
+in float types on which unit the float value represents and prevents
+programmers from mixing meters with feet, an error that can be easily done and
+is hard to detect.
 
 In the same fashion, the OCaml libarchive binding uses polymorphic variants
 types to annotate the signatures with the state of the handle (\inline{Open},
