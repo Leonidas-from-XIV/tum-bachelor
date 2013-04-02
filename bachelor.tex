@@ -886,6 +886,26 @@ the error string that libarchive emits.
 \section{Functional streaming interface}
 \label{sec:functional}
 
+Due to the monadic return value of the functions, it is possible to chain
+execution using the \inline{bind} operator (often called \inline{>>=}).
+
+The way \inline{bind} works for the error monad described in
+\autoref{sec:errormonad} is to pattern-match the value and if it is not the
+\inline{Failure} state, run a function with the unwrapped value might result in
+either a \inline{Success} or \inline{Failure} return value. This procedure
+might be chained multiple times, so functions can be arranged in a pipe-like
+fashion similar to pipes from shell programming as demonstrated in
+\autoref{lst:bindpipe}.
+
+\begin{listing}[H]
+	\begin{minted}[linenos]{ocaml}
+let (|>) = Pipe.(|>) in
+  match Pipe.construct raw_gz_file |> Pipe.decompress with
+  \end{minted}
+  \caption{Pipes implemented with the bind operator}
+  \label{lst:bindpipe}
+\end{listing}
+
 \chapter{Discussion}
 \label{sec:discussion}
 
