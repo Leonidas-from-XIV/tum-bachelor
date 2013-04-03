@@ -9,6 +9,7 @@
 \usepackage{chngcntr}
 \usepackage{amstext}
 \usepackage[normalem]{ulem}
+\usepackage{haskelllogo}
 
 % red underline, nice for correction things
 % http://tex.stackexchange.com/questions/7321/how-to-color-just-the-wave-produced-by-the-ulem-package
@@ -887,7 +888,21 @@ the error string that libarchive emits.
 \label{sec:functional}
 
 Due to the monadic return value of the functions, it is possible to chain
-execution using the \inline{bind} operator (often called \inline{>>=}).
+execution using the \inline{bind} operator. The \inline{bind} operator is
+usually spelled \inline{>>=}\footnote{The current logo of Haskell,
+\resizebox{!}{1.7ex}{\haskelllogo}, is in fact a stylized \inline{>>=}
+operator} but as OCaml does not have monads in the standard library, it doesn't
+define a \inline{bind} operator, so this has to be implemented.
+
+In the case of the error monad (\autoref{sec:errormonad}) the implementation of
+the functionality of the \inline{bind} operator is trivial, as shown in
+\autoref{lst:error}. But unlike Haskell, which allows every function to be used
+in an infix operator context, in OCaml a function needs to be named in a
+specific fashion to be able to be used as an infix operator.
+
+% TODO: http://caml.inria.fr/pub/docs/manual-ocaml/lex.html
+
+Therefore, TODO
 
 The way \inline{bind} works for the error monad described in
 \autoref{sec:errormonad} is to pattern-match the value and if it is not the
@@ -899,8 +914,9 @@ fashion similar to pipes from shell programming as demonstrated in
 
 \begin{listing}[H]
 	\begin{minted}[linenos]{ocaml}
-let (|>) = Pipe.(|>) in
-  match Pipe.construct raw_gz_file |> Pipe.decompress with
+match Pipe.construct raw_gz_file >>= Pipe.decompress with
+| ErrorMonad.Success (value) -> _
+| ErrorMonad.Failure (code, message) -> _
   \end{minted}
   \caption{Pipes implemented with the bind operator}
   \label{lst:bindpipe}
