@@ -902,7 +902,33 @@ specific fashion to be able to be used as an infix operator.
 
 % TODO: http://caml.inria.fr/pub/docs/manual-ocaml/lex.html
 
-Therefore, TODO
+Therefore, a different name has to be chosen. One possibility is \inline{|>},
+to invoke familiarity with the \inline{|} (pipe) operator from shell programs.
+In OCaml, \inline{|} cannot be redefined because it is a keyword, but
+\inline{|>} can be defined and shares the precedence rules with the familiar
+\inline{or} operator. Another alternative is direct usage of the \inline{>>=}
+operator, which can also be defined in OCaml and invokes familiarity from other
+languages.
+
+The actual implementation on the other hand is trivial, since operators in
+OCaml are defined like regular functions, both alternatives are shown in
+\autoref{lst:operators}. This is not a \emph{general} \inline{bind} operator as
+it only works on one type of monad, therefore it makes sense to define it in a
+separate module that can be included using \inline{open} when needed to prevent
+cluttering up the namespace with operators. An alternative is to use a local
+\inline{let} definition to create a local binding for the operator. This works
+exactly like any other \inline{let} binding for other values, there are no
+special rules involved.
+
+\begin{listing}[H]
+  \begin{minted}[linenos]{ocaml}
+let (|>) = ErrorMonad.bind
+let (>>=) = ErrorMonad.bind
+  \end{minted}
+  \caption{Possible and sensible operator choices for \inline{bind} the bind
+    operators together with the \emph{complete} implementation}
+  \label{lst:operators}
+\end{listing}
 
 The way \inline{bind} works for the error monad described in
 \autoref{sec:errormonad} is to pattern-match the value and if it is not the
@@ -913,12 +939,12 @@ fashion similar to pipes from shell programming as demonstrated in
 \autoref{lst:bindpipe}.
 
 \begin{listing}[H]
-	\begin{minted}[linenos]{ocaml}
+  \begin{minted}[linenos]{ocaml}
 match Pipe.construct raw_gz_file >>= Pipe.decompress with
 | ErrorMonad.Success (value) -> _
 | ErrorMonad.Failure (code, message) -> _
   \end{minted}
-  \caption{Pipes implemented with the bind operator}
+  \caption{Pipes implemented with the bind operator from \autoref{lst:operators}}
   \label{lst:bindpipe}
 \end{listing}
 
