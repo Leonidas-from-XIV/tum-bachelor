@@ -700,6 +700,83 @@ was successful or not. libarchive usually returns an integer value whereas the
 low-level binding maps the resulting value into a union type, so errors from
 libarchive do not go undetected.
 
+\subsection{Garbage collection}
+\label{sec:gc}
+
+Garbage collection is the process of reclaiming main memory from data that is
+not used anymore by the program. Garbage collection is a complicated process so
+many languages like OCaml, Java or Python include an automatic garbage
+collector which frees the memory on the heap when some data (a value or object)
+is not referenced from a program, usually due to a variable moving out of a
+function scope. In this case, the garbage collector runs and deletes the object
+so the memory can either be reused by the program or returned to the operating
+system.
+
+Earlier languages like C only reclaim memory from variables that are stored on
+the stack. It a dynamic data structure is necessary, the programmer needs to
+manually \enquote{allocate} (reserve) memory on the heap using functions like
+\inline{malloc}. This memory is reserved for the whole runtime of the program
+unless the memory is freed using the \inline{free} function.
+
+The binding in this bachelor thesis is written in both C and OCaml, so one has
+to provide hints to the garbage collector of the OCaml runtime on how to treat
+the OCaml values that are exposed to C as well as how to treat the C values
+that are exposed to OCaml.
+
+\subsubsection{Handling OCaml values in C}
+\label{sec:gcvalue}
+
+As shown in \autoref{lst:simplewrap}, the values from OCaml are passed to be of
+the \inline{value} type in C. This type is opaque, so the actual implementation
+is not of particular interest.
+
+The first action of a function is to use the \inline{CAMLparam}
+macro\footnote{In particular \inline{CAMLparam1} which means that it takes only
+one argument} to register the parameter of the function, \inline{unit} to the
+garbage collector as being in use, so it is not allowed to collect it just yet.
+In addition, if the garbage collector decides to move the memory
+block\footnote{the OCaml garbage collector not only frees memory but also
+reorders the memory to minimize fragmentation in a process called
+\enquote{compaction}} that holds the value, it needs to update the
+pointer that \inline{unit} points to.
+
+Second, a new local variable is created, \inline{r}, which will hold an OCaml
+value. It also notifies the GC of the presence of this variable to prevent its
+collection.
+
+Then the computation is done and the result of the computation, in this case an
+integer value representing a version number, is converted from a C \inline{int}
+type into an OCaml \inline{value} type.
+
+At the end, instead of a \inline{return} statement, a special
+\inline{CAMLreturn} macro is called which returns the local variable \inline{r}
+and tells the garbage collector that all other previously declared values, in
+this case only \inline{unit} can be discarded.
+
+As an optimization, the fact that the memory \emph{can} be discarded does not
+mean that it \emph{is} immediately discarded. As a run of the garbage collector
+takes time, the collection is usually delayed until enough \enquote{garbage}
+has piled up. Very short programs may not ever see a run of the garbage
+collectior since when the program terminates all memory is freed automatically,
+so collection of garbage immediately before exiting would only cause slowdown.
+
+This optimization also has the downside that failures in memory handling are
+not detected, unless the garbage collector is activated which might not always
+happen in short programs like unit tests. In fact, a previous version of this
+binding never used \inline{CAMLparam}/\inline{CAMLlocal}/\inline{CAMLreturn}
+and ran without problems — until garbage collection was forced, in which case
+it crashed during garbage collection. Thus, as a recommendation for unit tests
+which test C code bindings it is a good practice to call the garbage collector
+manually at the end to make sure that the C binding has not created problems
+with garbage collection.
+
+% https://sympa.inria.fr/sympa/arc/caml-list/2013-04/msg00082.html
+
+\subsubsection{Handling C values in OCaml}
+\label{sec:gcblock}
+
+TODO
+
 \subsection{Memory allocator}
 \label{sec:allocator}
 
