@@ -818,6 +818,52 @@ garbage collector.
   \label{lst:customblock}
 \end{listing}
 
+The binding to libarchive features a number of objects that are created as
+custom blocks and feature their own specific finalization functions:
+
+\begin{itemize}
+  \item \inline{archive}, representing an archive opened for reading or
+    writing.
+  \item \inline{write\_buffer}, a dynamically growing buffer to which data can
+    be written.
+  \item \inline{written\_ptr}, a pointer to a value that holds the number of
+    bytes that were written to the \inline{write\_buffer}, used for reading
+    the contens of said buffer.
+  \item \inline{entry}, representing an entry in the archive.
+\end{itemize}
+
+Usually, read and write archive handles have to be treated in distinct ways,
+namely \inline{archive\_read\_free} and \inline{archive\_write\_free}. As these
+both have the exact same signature, do the exact same thing and libarchive
+knows internally whether a handle is of reading or writing type\footnote{An
+information that is not available to code that uses libarchive}, libarchive was
+extended with a generic finalization function, \inline{archive\_free}, which
+can be called on both types of handles. Thus, both read and write handles are
+represented by the same custom block because they share the implementation of
+the finalization function.
+
+The opposite is true for entry objects: libarchive frees the entry objects by
+itself if they were created by libarchive. If they were created by the user of
+the code, they need to be freed manually. An example of this is when reading an
+archive, libarchive returns entry objects which it created by itself and will
+free them by itself. On the other hand when creating an archive, each entry
+object has to be created by the user and manually freed. The entries created by
+libarchive could be called \enquote{shared entries} and the ones created by the
+user \enquote{own entries}.
+
+The C code wrapper therefore uses two different structs to deal with these:
+\enquote{shared} entries get the default OCaml finalizer implementation which
+does nothing, because the entry \emph{will} be freed by libarchive. Freeing it
+would be an error, because then libarchive would later free the entry object
+\emph{again}, thus causing a double-free and crash. The implementation of
+custom blocks for \emph{own} entries defines a custom finalization function
+which calls \inline{archive\_entry\_free}. Not calling it would be an error and
+leak entry objects. Yet this distinction is only in the C code — both custom
+blocks are exported to the OCaml code as one single type. This seems odd, but
+it is correct as the only difference between these two entry types is that they
+have different finalization functions but the \emph{content} of the block is
+the same — a pointer to an entry object.
+
 \subsection{Memory allocator}
 \label{sec:allocator}
 
