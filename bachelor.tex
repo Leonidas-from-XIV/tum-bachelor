@@ -775,7 +775,48 @@ with garbage collection.
 \subsubsection{Handling C values in OCaml}
 \label{sec:gcblock}
 
-TODO
+Another issue arises when exposing pointers to C objects to OCaml code: the
+user has to take case of freeing the objects. For this problem, there are two
+possible solutions: either expose C functions to OCaml that handle freeing the
+allocated resources when the OCaml programmer knows he won't be using them
+furthermore or putting these objects under the control of the garbage collector
+of OCaml.
+
+Both approaches have both advantages as well as disadvantages:
+
+\begin{itemize}
+  \item Explicit freeing has the advantage of requiring the least memory, if
+    used properly. The programmer can free objects immediately after he is done
+    with them and does not have to wait for the references to the objects to
+    exit the scope and the garbage collector starting up. Forgetting to free
+    unneeded references will lead to memory leaks. Also, using references after
+    they have already been freed by mistake might lead to crashes.
+  \item Implicit garbage collection has the advantage of never forgetting to
+    free memory blocks, although it might take some time until the garbage
+    collector decides to free the memory.
+\end{itemize}
+
+For the binding, it was decided to be consistent with the OCaml language and
+choose the safer route, that is manage the objects with the garbage collector
+to rule out crashes due to incorrect memory management.
+
+To use the OCaml garbage collector one needs to define a so-called custom
+block. OCaml manages its values in \enquote{blocks} and has a number of
+predefined blocks like integers and floating point numbers. But to manage C
+objects, one needs to create a new block. Such a block is allocated by
+\inline{caml\_custom\_alloc} which takes a pointer to a struct as first
+argument. This struct includes pointers to callback functions as seen in
+\autoref{lst:customblock}. All callbacks except for the finalization callback
+are set to default implementations provided by OCaml, the finalization callback
+is a custom C function to handle the de-allocation of the \emph{contents} of
+the block. Whereas the deallocation of the block itself is handled by the
+garbage collector.
+
+\begin{listing}[h]
+  \inputminted[linenos]{c}{custom-block.c}
+  \caption{The definition of a custom block struct}
+  \label{lst:customblock}
+\end{listing}
 
 \subsection{Memory allocator}
 \label{sec:allocator}
