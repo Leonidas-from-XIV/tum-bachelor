@@ -315,7 +315,44 @@ for (TimerTask t : collection) {
 \subsection{I/O Streams}
 \label{sec:jio}
 
-TODO
+Java has a very structured approach to input/output. There exists a distinction
+between binary streams, represented by \inline{InputStream} and
+\inline{OutputStream} and character input, handled by descendants of the
+\inline{Reader} and \inline{Writer} classes.
+
+To handle binary data, one can use a class that inherits from the
+\inline{InputStream} or \inline{OutputStream} classes, depending on whether
+data is to be read or written. This is different from both the approaches of C
+and Python, since in Java there are distinct facilities for reading and writing
+whereas C just uses a \inline{FILE} that is opened in a reading or writing
+mode, rendering write operations on a read-handle invalid during program
+execution. Python's file-like objects have adopted similar semantics. In Java,
+these types of handles are distinguished at compile-time.
+
+The Java standard library supplies a number of different types of these
+streams, most notably of course the
+\inline{FileInputStream}/\inline{FileOutputStream} classes, which allow reading
+from files in the file system.
+
+To read a file, either the name of the file can be supplied to a
+\inline{FileInputStream} as well as a Java \inline{File} instance. The latter
+represents a file itself and not a handle to an opened file like \inline{FILE}
+in C. After creating an instance of the \inline{FileInputStream}, data can be
+read via its \inline{read} method which is very similar to the familiar
+\inline{fread} function from C: it reads a number of bytes into an array of
+byte-type at an optional offset and returns the number of bytes that were read.
+
+Handling text data is slightly more involved, since usually when dealing with
+character data it is useful to use \emph{buffered I/O} to be able to read and
+write whole lines, instead of reading single bytes and assembling them into
+lines manually. To read a text-file line-wise, one needs to create an instance
+of the \inline{FileReader} class and then wrap this instance in an
+\inline{BufferedStreamReader}, which supplies an additional \inline{readLine}
+method to read the next line of a file.
+
+As for this rather huge taxonomy of classes to deal with I/O, Java has earned a
+reputation of being overly complex although the framework itself is quite
+flexible.
 
 \section{Python}
 \label{sec:python}
