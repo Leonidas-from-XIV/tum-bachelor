@@ -1152,6 +1152,35 @@ match Pipe.construct raw_gz_file >>= Pipe.decompress with
 \chapter{Discussion}
 \label{sec:discussion}
 
+With the project in a well working state, it is useful to check on how this
+thesis has improved the situation in (not only) the OCaml ecosystem, where this
+could lead in the future and of course, what insights were gained in the
+process.
+
+\section{Improvements}
+\label{sec:usage}
+
+The beginning of this thesis was an issue with camlzip not being able to handle
+archives in-memory thus forcing users of camlzip to write files to disc first
+which creates a lot of redundant I/O and going through a hard disc potentially
+reduces performance. In case of solid state drives, this creates additional
+unnecessary writes, which decrease the life time of the disc.
+
+This bug could have been amended, but it would only solve the problem with ZIP
+files, therefore a more general method is to be preferred. This more general
+method has been a more generic binding TODO.
+
+One of the advantages of OCaml is that it is very expressive, so while there
+was much consideration about the API and implementation, it ended up being
+rather few lines compared to the C code which spends a lot of lines in managing
+memory thus dominating the line count.
+
+\section{Future improvements}
+\label{sec:future}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
 \bibliographystyle{plain}
 \bibliography{bachelor}
 \end{document}
