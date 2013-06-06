@@ -109,10 +109,10 @@
 \label{sec:intro}
 
 Processing data is the use-case computers were invented for: doing calculations
-that are too complicated for manual computation or too time-consuming.
-Therefore, in the history of computing the representation of data was always
-very important. Usual hardware architectures used only to operate on scalar
-values, because the registers of CPUs could only store scalar values.
+that are too complicated for manual computation or too time-consuming.  In the
+history of computing the representation of data was always very important.
+Usual hardware architectures used only to operate on scalar values, because the
+registers of CPUs could only store scalar values.
 
 Computers are very good at repeating tasks, so it is only natural to extend the
 processing of one record to processing multiple records on which the
@@ -138,8 +138,8 @@ syntactic extensions.
 
 In functional programming in particular, lists have been very important. Many
 languages utilize operators like \inline{first} and \inline{rest} to get the
-first element of the list and the remainder of the list. The second element can
-be expressed via \inline{first}, \inline{rest} and recursion. OCaml in
+first element of the list and the remainder of the list. Consequent element can
+be expressed via recursive calls to \inline{first} and \inline{rest}. OCaml in
 particular provides \emph{pattern matching} and a special syntax to destructure
 lists in this way.
 
@@ -147,8 +147,8 @@ An evolution of lists is the \emph{sequence} abstraction. Lists are limited by
 the available memory to hold all the records, whereas a sequence does not need
 to.  To make this possible, sequences sacrifice some features of lists like
 random access on each record and instead provide a way to get the first
-element. As we saw, in the context of functional programming, this restriction
-is not problematic as other ways to work with this data exist.
+element. As we saw, this restriction is not problematic as other ways to work
+with this data exist.
 
 These sequences might be \emph{lazy}, meaning that the sequence can be created
 without having to evaluate all values of itself. These values need only be
@@ -165,13 +165,15 @@ on top of it.
 
 Lazy streams are a feature that many languages support since there is one
 specific use-case that nearly all languages support and that can only be
-reasonably implemented with a veriant of lazy streams: file handling.
+reasonably implemented with a variant of lazy streams: file handling.
 
 Most systems allow files to grow much larger than the operating memory of the
-system, therefore holding all data in memory is impossible. Yet languages need
-to support reading and writing such files. So the languages need to have an
-implementation of a data type that can be read incrementally, without having to
-hold it completely in memory.
+system, therefore holding all data in memory is infeasible. Some files might
+even be virtually infinite, like named FIFOs or Unix sockets that can be found
+in many flavors of Unix systems. Yet languages need to support reading and
+writing such files. So the languages need to have an implementation of a data
+type that can be read incrementally, without having to hold it completely in
+memory.
 
 A number of popular languages were picked with interesting and contrasting
 approaches on this issue, so the advantages and disadvantages can be analyzed.
@@ -180,16 +182,16 @@ The insights are used to propose of a good solution for OCaml.
 \section{C}
 \label{sec:c}
 
-The C programming language hardly needs any introduction, considering it is
-among the most widely used programming languages. Unlike many others, the C
-programming language is rather old and lacking some modern features. The C type
-system essentially only knows about numbers: pointers are a special case of
-numbers and strings are also represented as arrays of numbers.
+The C programming language is among the most widely used programming languages.
+The C programming language is from 1973\footnote{Beleg? K+R?} and lacking some
+modern features. The C type system essentially only knows about numbers:
+pointers are a special case of numbers and strings are also represented as
+arrays of numbers.
 
-Therefore, with the lack of syntactic support many libraries have to emulate
+Therefore, with the lack of syntactic support many libraries have to provide
 functionality using functions and macros. One very fundamental library for C is
-of course the Standard Library (\enquote{stdlib}) which is usually provided by
-a library called \enquote{libc} and shipped by the operating system.
+the Standard Library (\enquote{stdlib}) which is usually provided by a library
+called \enquote{libc} and shipped by the operating system.
 
 This basic library provides functions for handling strings, copying data in a
 convenient way, handling files and many more. In fact, handling files is one of
@@ -199,21 +201,21 @@ several magnitudes smaller than currently, so the designers had to come up with
 a solution.
 
 The C solution is to use an interface that comes directly from the operating
-system: file descriptors. File descriptiors (FDs) are basically just integer
+system: file descriptors. File descriptors (FDs) are basically just integer
 numbers that reference an opened file. This concept can be even considered lazy
 evaluated, since opening a file does not require reading its contents. In C,
 file descriptors are usually wrapped in a data type called \inline{FILE}, but
-working directly with the descriptors directly is also possible, if somewhat
-less convenient.
+working directly with the descriptors is also possible, if somewhat less
+convenient.
 
-A file is read by using a stdlib function called \inline{fread} which takes a
-buffer as a first argument, as location on where to save the data read in main
-memory, a size indicator for letting the system know how big one element of the
-buffer is, a count, to notify how many elements to read and finally an opened
-file, wrapped by the \inline{FILE} type\footnote{A similar function
-\inline{read} does the same thing with a file descriptor instead of a
-\inline{FILE}}. An analogous functionality is implemented by \inline{fwrite} to
-write data to files.
+A file is read by using a stdlib function called \inline{fread(3)} which takes
+a buffer as a first argument, as location on where to save the data read in
+main memory, a size indicator for letting the system know how big one element
+of the buffer is, a count, to notify how many elements to read and finally an
+opened file, wrapped by the \inline{FILE} type\footnote{A similar function
+\inline{read(3)} does the same thing with a file descriptor instead of a
+\inline{FILE}}. An analogous functionality is implemented by \inline{fwrite(3)}
+to write data to files.
 
 This functionality seems limited to files, but that is not the case. C also
 knows 3 \enquote{files} that are not actually files: \inline{stdin} for reading
@@ -235,14 +237,14 @@ how the \inline{FILE} type is used.
 
 With a streaming API in place, there are a number of tasks that are a natural
 fit, for example compression of data. An uncompressed data stream gets in, a
-compressed stream comes out with the encryption function as a bleack box. Such
-compression algorithms exist since years and are very popular and common.
+compressed stream comes out with the encryption function as a black box. Such
+compression algorithms exist for decades and are very popular and common.
 Examples include gzip~\cite{rfc1952} and
 bzip2\footnote{\url{http://bzip.org/}}, each tailored to different use cases:
 good compression ratio, fast decompression, good compression ratios on specific
 types of data etc.
 
-Libraries for these algorithms are implemented most of the time in C
+Libraries for these algorithms are often implemented in C
 (\inline{zlib} for gzip, \inline{libbz2} for bzip2) or at least have an
 interface to be used from C (LZMA reference implementation\footnote{7-Zip
 project, \url{http://www.7-zip.org/}}), therefore giving implementers in C a
@@ -253,12 +255,24 @@ libarchive\footnote{\url{http://www.libarchive.org}}, a wrapper around a huge
 amount of different compression libraries. Furthermore, libarchive provides
 implementations of common container formats like \inline{TAR} or \inline{ZIP}.
 
-For this bachelor's thesis, implementing compression algorithms is
-out-of-scope, so using libarchive as a way to implement compression
-functionality is a perfect fit. One big advantage of libarchive is that it is a
-universal wrapper, so adding new algorithms can be done completely within
-libarchive while all users of libarchive, like this bachelor thesis, can profit
-and do not suffer duplication of efforts.
+Fortunately, since the C application binary interface is mostly
+standarized\footnote{TODO: stdcall, C calling conventiosn, Belege} and the
+calling conventions are both simple and commonly understood, most languages
+provide interfaces to call C code, thus implementing the compression algorithms
+in C the most common denominator for a range of languages. These interfaces can
+range quite different: from compatibility and linking directly to C code like
+C++ does, to dynamically loading the C libraries on runtime via \inline{dlopen}
+like Python. OCaml goes a middle way, by requiring glue code in C that
+interfaces the C libraries and returns OCaml data types to the OCaml run time.
+These functions are then fitted with OCaml type signatures and can then be
+directly called from the code as if they were written in OCaml as well.
+
+The primary objective of this bachelor's thesis is not to implement compression
+algorithms, so using libarchive as a way to implement compression functionality
+is a perfect fit. One big advantage of libarchive is that it is a universal
+wrapper, so adding new algorithms can be done completely within libarchive
+while all users of libarchive, like this bachelor thesis, can profit and do not
+suffer duplication of efforts.
 
 \section{Java}
 \label{sec:java}
@@ -281,7 +295,7 @@ in \autoref{lst:jiter}.
 \begin{listing}[H]
   \begin{minted}[linenos]{c}
 for (Iterator<TimerTask> i = collection.iterator(); i.hasNext(); ) {
-    i.next().cancel();
+    i.next().doSomething();
 }
   \end{minted}
   \caption{Classic iteration without syntactic sugar}
@@ -296,7 +310,7 @@ the next element of the iterator and an optional method \inline{remove} to
 remove the last element of the collection over which the iterator is iterating.
 
 Java 1.5 extended the \inline{for}-loop to do the iterator management
-automatically, which does the creation of the iterator automatically, as in
+automatically, which creates the iterator on its own, as in
 \autoref{lst:jiter5}. With the addition of generics in Java 1.5, the
 \inline{next} method was changed to return an element of the containing type
 instead of an Object that needed to be cast to the desired type, thus improving
@@ -305,7 +319,7 @@ type safety.
 \begin{listing}[H]
   \begin{minted}[linenos]{c}
 for (TimerTask t : collection) {
-    t.cancel();
+    t.doSomething();
 }
   \end{minted}
   \caption{Java 1.5-style iteration with syntactic sugar}
@@ -322,17 +336,16 @@ between binary streams, represented by \inline{InputStream} and
 
 To handle binary data, one can use a class that inherits from the
 \inline{InputStream} or \inline{OutputStream} classes, depending on whether
-data is to be read or written. This is different from both the approaches of C
-and Python, since in Java there are distinct facilities for reading and writing
-whereas C just uses a \inline{FILE} that is opened in a reading or writing
-mode, rendering write operations on a read-handle invalid during program
-execution. Python's file-like objects have adopted similar semantics. In Java,
-these types of handles are distinguished at compile-time.
+data is to be read or written. This is different from both the approaches of C,
+since in Java there are distinct facilities for reading and writing whereas C
+only uses a \inline{FILE} that is opened in a reading or writing mode,
+rendering write operations on a read-handle invalid during program execution.
+Python's file-like objects have adopted similar semantics. In Java, these types
+of handles are distinguished at compile-time.
 
 The Java standard library supplies a number of different types of these
-streams, most notably of course the
-\inline{FileInputStream}/\inline{FileOutputStream} classes, which allow reading
-from files in the file system.
+streams, most notably the \inline{FileInputStream}/\inline{FileOutputStream}
+classes, which allow reading from files in the file system.
 
 To read a file, either the name of the file can be supplied to a
 \inline{FileInputStream} as well as a Java \inline{File} instance. The latter
@@ -363,11 +376,10 @@ years in scientific communities as well as for web development. Much of this
 apotion can be attributed to the simplicity of the language and the thriving
 ecosystem.
 
-One important concept in Python is so called
-\emph{duck-typing}\footnote{\emph{If it walks like a duck, if it quacks like a
-duck, then it is a duck} is the typical explanation of this term} in which
+One important concept in Python is the so called \emph{duck-typing} in which
 there is no formal interface like in Java but rather objects that provide
-specific behaviors.
+specific behaviors: \emph{If it walks like a duck, it if quacks like a duck,
+then it is a duck}
 
 This means that every object can support any interface, as long as it provides
 the proper methods and returns the proper values. No special definitions are
@@ -394,7 +406,8 @@ very limited operations:
 Python's built-in datatypes support this interface, therefore implementing
 these interfaces in custom types enables the standard Python syntax to use them
 just like every other type. In particular, lists support this interface but
-also strings and files as well.
+also strings and files as well. Thus implementing own custom streaming types is
+easy and convenient.
 
 \begin{listing}[H]
   \inputminted[linenos]{python}{iterable.py}
