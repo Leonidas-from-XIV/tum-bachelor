@@ -855,16 +855,17 @@ Both approaches have both advantages as well as disadvantages:
     they have already been freed by mistake might lead to crashes.
   \item Implicit garbage collection has the advantage of never forgetting to
     free memory blocks, although it might take some time until the garbage
-    collector decides to free the memory.
+    collector decides to free the memory. This is a common behaviour for
+    values returned from ordinary functions implemented in OCaml code.
 \end{itemize}
 
 For the binding, it was decided to be consistent with the OCaml language and
-choose the safer route, that is manage the objects with the garbage collector
-to rule out crashes due to incorrect memory management.
+choose the safer route, that is to manage the objects with the garbage
+collector to rule out crashes due to incorrect memory management.
 
 To use the OCaml garbage collector one needs to define a so-called custom
 block. OCaml manages its values in \enquote{blocks} and has a number of
-predefined blocks like integers and floating point numbers. But to manage C
+predefined blocks like integers and floating point numbers. To manage C
 objects, one needs to create a new block. Such a block is allocated by
 \inline{caml\_custom\_alloc} which takes a pointer to a struct as first
 argument. This struct includes pointers to callback functions as seen in
@@ -909,9 +910,9 @@ itself if they were created by libarchive. If they were created by the user of
 the code, they need to be freed manually. An example of this is when reading an
 archive, libarchive returns entry objects which it created by itself and will
 free them by itself. On the other hand when creating an archive, each entry
-object has to be created by the user and manually freed. The entries created by
-libarchive could be called \enquote{shared entries} and the ones created by the
-user \enquote{own entries}.
+object has to be created by the user and manually freed. Here we will call
+entries created by libarchive \enquote{shared entries} and those created by the
+library user \enquote{own entries}.
 
 The C code wrapper therefore uses two different structs to deal with these:
 \enquote{shared} entries get the default OCaml finalizer implementation which
@@ -1027,19 +1028,18 @@ an \inline{archive} type. This approach works very well but it doesn't
 differentiate between \enquote{read}/\enquote{write} handles nor their state,
 whether they are opened or closed.
 
-This thesis does better by splitting the handle in two distinct types, so
+This thesis improves this by splitting the handle in two distinct types, so
 passing a \inline{readhandle} into a function that expects a
 \inline{writehandle} is directly disallowed by the type system and such a
 program does not compile. This can already eliminate a lot of possible bugs
 that were possible with the C API. The implementation is trivial, since
 libarchive is always strict on requiring either \enquote{read} handles or
 \enquote{write} handles but never both. So the OCaml binding can just state in
-the \inline{external} definition that the return value of the
-\enquote{read} handle creation function is \inline{readhandle} and not
-\inline{archive}. All functions that would take C
-\inline{archive} \enquote{read} handles can be declared to take OCaml
-\inline{readhandles} instead. \enquote{write} handles and their functions are
-treated in an analogous way.
+the \inline{external} definition that the return value of the \enquote{read}
+handle creation function is \inline{readhandle} and not \inline{archive}. All
+functions that would take C \inline{archive} \enquote{read} handles can be
+declared to take OCaml \inline{readhandles} instead. \enquote{write} handles
+and their functions are treated in an analogous way.
 
 This solves accidental mixing up of \enquote{read} and \enquote{write} handles,
 but it does not prevent extracting archives that weren't yet
@@ -1056,7 +1056,9 @@ introduces new polymorphic variant types~\cite{ocamlmanual} to implement
 additional annotations.  The code in \autoref{lst:phantom} adds an annotation
 in float types on which unit the float value represents and prevents
 programmers from mixing meters with feet, an error that can be easily done and
-is hard to detect.
+is hard to detect. The advantage is gained while still using the efficient,
+untagged \inline{float} representation at run time~\cite{hinze2003fun},
+\cite{gibbons2003fun}.
 
 In the same fashion, the OCaml libarchive binding uses polymorphic variants
 types to annotate the signatures with the state of the handle (\inline{Open},
