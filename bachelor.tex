@@ -560,7 +560,8 @@ that is usually expected from a compression library.
 
 \begin{itemize}
   \item camlzip\footnote{\url{https://forge.ocamlcore.org/projects/camlzip/}}:
-    Mature library, but supports only Zip archives. One specific limitation is
+    Mature library, but supports only ZIP archives and GZip files. One specific
+    limitation is
     the lack of support for in-memory data which requires to read and write
     temporary files causing bad performance. Also, appears to be in maintenance
     mode with hardly any changes in the last years.
@@ -625,7 +626,8 @@ Formats supported be libarchive include:
 Apart from these formats libarchive also supports various compression filters:
 
 \begin{itemize}
-  \item \emph{bzip2}, popular alternative to \emph{gzip} with better compression
+  \item \emph{bzip2}, popular alternative to \emph{gzip} with better
+    compression results~\cite{kivijarvi1998comparison}
   \item \emph{compress}, a mostly obsolete compression format (\inline{.Z})
     used on Unix
   \item \emph{grzip}, a compressor that applies special preprocessing
@@ -634,11 +636,15 @@ Apart from these formats libarchive also supports various compression filters:
     LZO, gzip, bzip2)
   \item \emph{LZO}, an algorithm designed with very fast decompression in mind
   \item \emph{RPM}, packages for the RPM package manager used in Fedora Linux,
-    openSUSE and a variety of other distributions
+    openSUSE and a variety of other distributions\footnote{While RPM is used to
+    store multiple files, it is essentially an CPIO archive compressed with
+    GZip wrapped with some meta data as described in
+    \url{http://www.rpm.org/max-rpm/s1-rpm-file-format-rpm-file-format.html}}
   \item \emph{UU}, UUencode, a way to encode 8 bit data into printable ASCII
     characters
   \item \emph{XZ}, a compressor with high compression using the LZMA2 algorithm
-    from 7-Zip
+    from 7-Zip, with usually higher compression rates than
+    BZip2~\cite{ijrcct96}
 \end{itemize}
 
 In addition to the provided support, it is also possible to create own filters
