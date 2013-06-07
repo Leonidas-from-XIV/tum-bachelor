@@ -620,7 +620,7 @@ Formats supported be libarchive include:
   \item \emph{TAR}, typical file exchange format in Unix systems, with
     \emph{ustar}, \emph{GNU} and \emph{PAX} variants supported.
   \item \emph{XAR}, format used by the RPM5 package manager
-  \item \emph{ZIP}, most popular archive format
+  \item \emph{ZIP}, very popular archive format
 \end{itemize}
 
 Apart from these formats libarchive also supports various compression filters:
@@ -662,16 +662,18 @@ This is useful to decompress files that are just processed with e.g. gzip but
 not in a tar file. During implementation it turned out that there was only a
 format for \emph{reading} raw files, but \emph{writing} these was not possible.
 
-A patch for libarchive was written to add such a filter and submitted to the
+I wrote a patch for libarchive to add such a filter and submitted it to the
 upstream author. After a number of revisions on functionality and code style \&
 conventions, the patch was added to the upstream version of libarchive,
-together with unit tests.
+together with unit tests. In the process of writing this patch, I found that
+setting some fields of a compression format to \inline{NULL} caused libarchive
+to crash. Consultation with the libarchive author confirmed this as a bug, so I
+also wrote and submitted a patch for this issue which has also been included in
+the upstream version.
 
 Adding new formats to libarchive is essentially simple, since it provides hooks
 for implementing own formats. \autoref{lst:archiveformat} sets these hooks in
-the lines 14 to 23. Not implemented hooks are not used, although another bug
-with handling unset (\inline{NULL}) callbacks, for which another patch was
-created and submitted to the upstream author.
+the lines 14 to 23.
 
 \begin{listing}[h]
   \inputminted[linenos,fontsize=\small]{c}{archive-set-format.c}
@@ -717,10 +719,11 @@ signature and a C name as string. The function name has to be equal to a
 function in C that gets compiled together with the OCaml code.
 
 From the C perspecitve, OCaml values have the type \inline{value} (defined in
-the OCaml include files) and can be converted to and from using a set of C
-macros. This allows to create wrapper functions that extract the C values from
-the OCaml values, call the C functions, pack their results into OCaml values
-and return to the OCaml code.
+the OCaml header files) and can be converted to C values using a set of C
+macros as well as constructed from C values with another set of macros. This
+allows to create wrapper functions that extract the C values from the OCaml
+values, call the C functions, pack their results into OCaml values and return
+to the OCaml code.
 
 \section{Low-level binding}
 \label{sec:lowlevel}
@@ -784,15 +787,20 @@ As shown in \autoref{lst:simplewrap}, the values from OCaml are passed to be of
 the \inline{value} type in C. This type is opaque, so the actual implementation
 is not of particular interest.
 
-The first action of a function is to use the \inline{CAMLparam}
+The first action of a C wrapper function is to use the \inline{CAMLparam}
 macro\footnote{In particular \inline{CAMLparam1} which means that it takes only
-one argument} to register the parameter of the function, \inline{unit} to the
-garbage collector as being in use, so it is not allowed to collect it just yet.
-In addition, if the garbage collector decides to move the memory
-block\footnote{the OCaml garbage collector not only frees memory but also
-reorders the memory to minimize fragmentation in a process called
-\enquote{compaction}} that holds the value, it needs to update the
-pointer that \inline{unit} points to.
+one argument} to register the parameter of the function, in case of
+\autoref{lst:simplewrap}, \inline{unit}, to the garbage collector as being in
+use, so it is not allowed to collect it just yet.  In addition, if the garbage
+collector decides to move the memory block\footnote{the OCaml garbage collector
+not only frees memory but also reorders the memory to minimize
+fragmentation in a process called \enquote{compaction}} that holds the value,
+it needs to update the pointer that \inline{unit} points to, therefore such a
+variable needs to be registered to the GC first. In this example, the value
+passed is an instance of the OCaml unit type, which does not hold information
+that would require being extracted. Yet it is required, since OCaml functions
+are required to have one argument, so it is customary to pass an argument of
+unit type.
 
 Second, a new local variable is created, \inline{r}, which will hold an OCaml
 value. It also notifies the GC of the presence of this variable to prevent its
@@ -804,8 +812,8 @@ type into an OCaml \inline{value} type.
 
 At the end, instead of a \inline{return} statement, a special
 \inline{CAMLreturn} macro is called which returns the local variable \inline{r}
-and tells the garbage collector that all other previously declared values, in
-this case only \inline{unit} can be discarded.
+and tells the garbage collector that all other previously declared values — in
+this case only \inline{unit} — can be discarded.
 
 As an optimization, the fact that the memory \emph{can} be discarded does not
 mean that it \emph{is} immediately discarded. As a run of the garbage collector
