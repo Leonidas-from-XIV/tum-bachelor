@@ -1009,6 +1009,9 @@ size is sanity-checked whether it really fits the new data.
 The simple algorithm used prevents excessive resizes while minimizing memory
 usage.
 
+\section{Functional streaming interface}
+\label{sec:functional}
+
 \subsection{Phantom types}
 \label{sec:phantom}
 
@@ -1130,8 +1133,8 @@ the error string that libarchive emits.
   \label{lst:error}
 \end{listing}
 
-\section{Functional streaming interface}
-\label{sec:functional}
+\subsection{Usage of monadic data}
+\label{sec:monadicusage}
 
 Due to the monadic return value of the functions, it is possible to chain
 execution using the \inline{bind} operator. The \inline{bind} operator is
