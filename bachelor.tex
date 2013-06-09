@@ -711,13 +711,16 @@ constructed.
 The OCaml compiler supports extending the functionality of the language not
 only by writing OCaml code but it also allows to interoperate with C code. This
 functionality is crucial to integrate with external systems which often export
-their functionality as C libraries.
+their functionality as C libraries. In the case of this thesis, we can thus
+leverage the functionality of libarchive to demonstrate the streaming interface
+as well as provide a first useful application of the streaming interface.
 
-This functionality is called a \enquote{foreign function interface} (FFI). In
-the case of OCaml, the language has a special construct to declare
-\enquote{external} functions by giving them an OCaml name, an OCaml type
-signature and a C name as string. The function name has to be equal to a
-function in C that gets compiled together with the OCaml code.
+This functionality to interface with \enquote{foreign} code is called a
+\enquote{foreign function interface} (FFI). In the case of OCaml, the language
+has a special construct to declare \enquote{external} functions by giving them
+an OCaml name, an OCaml type signature and a C name as string. The function
+name has to be equal to a function in C that gets linked together with the
+OCaml code.
 
 From the C perspecitve, OCaml values have the type \inline{value} (defined in
 the OCaml header files) and can be converted to C values using a set of C
@@ -728,6 +731,20 @@ to the OCaml code.
 
 \section{Low-level binding}
 \label{sec:lowlevel}
+
+To create a sensible binding to libarchive we will start creating a layer of
+abstractions, to ease the usage of the binding. Abstractions like this are
+useful, because they ease the understanding of code, by hiding the irrelevant
+parts~\cite{liskov1986abstraction}. We will start with a low-level abstraction
+which represents the C API of libarchive in OCaml in a close way. From this, we
+are going to use what Barbara Liskov calls procedural abstractions to create a
+more convenient way to use the functionality that is not limited by what the C
+programming language supports.
+
+In \autoref{sec:functional} we are going to go beyond an simple interface. We
+will leverage some advanced features of OCaml to provide additional safety on
+the API that will disallow certain errors at compile time as well as provide a
+natural way to deal with errors that happen on run time.
 
 The lowest-level binding code for this thesis creates an OCaml wrapper for
 libarchive what is very similar to the C API of libarchive. This means the
