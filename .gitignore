@@ -33,3 +33,5 @@
 *.fls
 *.pdf
 *.pyg
+*.bcf
+*.run.xml
