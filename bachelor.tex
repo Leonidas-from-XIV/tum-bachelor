@@ -310,12 +310,13 @@ determine whether the end of the iterator was reached, \inline{next} to return
 the next element of the iterator and an optional method \inline{remove} to
 remove the last element of the collection over which the iterator is iterating.
 
-Java 1.5 extended the \inline{for}-loop to do the iterator management
-automatically, which creates the iterator on its own, as in
-\autoref{lst:jiter5}. With the addition of generics in Java 1.5, the
-\inline{next} method was changed to return an element of the containing type
-instead of an Object that needed to be cast to the desired type, thus improving
-type safety.
+Java 1.5 extended the \inline{for} loop syntax to add a variant that can do the
+iterator management automatically, such a statement is called the
+\enquote{enhanced \inline{for} statement}~\cite{gosling2013java}. This type of
+\inline{for} loop creates the iterator on its own, as in \autoref{lst:jiter5}.
+With the addition of generics in Java 1.5, the \inline{next} method was changed
+to return an element of the containing type instead of an Object that needed to
+be cast to the desired type, thus improving type safety.
 
 \begin{listing}[H]
   \begin{minted}[linenos]{c}
