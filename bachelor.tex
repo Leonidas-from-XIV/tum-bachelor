@@ -121,11 +121,12 @@ by reading a record from punch cards, computing the result and writing the
 result to punch cards. Later systems used their built-in memory to hold the
 data and multiple ways to organize this data were possible.
 
-One way to organize was using fixed-size arrays of values on which one
-particular operation was executed. Languages organizing data this way are APL
-and its sucessors J and K for example. Another example is the x86 assembly
-language with its special-purpose MMX and SSE extensions which compute on sets
-of registers holding floating point values.
+One way to organize was using arrays of values on which one particular
+operation was executed. Languages organizing data this way are
+APL~\cite{biancuzzi2009masterminds} and its sucessors J and K for example.
+Another example is the x86 assembly language with its special-purpose MMX and
+SSE extensions which compute on sets of registers holding floating point
+values.
 
 An alternative is the \emph{list} abstraction. Seemingly similar to arrays, the
 high-level difference with lists is that lists do not usually have a fixed
@@ -1205,23 +1206,26 @@ thesis has improved the situation in (not only) the OCaml ecosystem, where this
 could lead in the future and of course, what insights were gained in the
 process.
 
-\section{Improvements}
-\label{sec:usage}
+\section{Achivements}
+\label{sec:achivements}
 
-The beginning of this thesis was an issue with camlzip not being able to handle
-archives in-memory thus forcing users of camlzip to write files to disc first
-which creates a lot of redundant I/O and going through a hard disc potentially
-reduces performance. In case of solid state drives, this creates additional
-unnecessary writes, which decrease the life time of the disc.
+% What we did
+% Found a nice API
+% Applied advanced functional programming for such
+% Extended libarchive
+% Created compression library for OCaml
 
-This bug could have been amended, but it would only solve the problem with ZIP
-files, therefore a more general method is to be preferred. This more general
-method has been a more generic binding TODO.
+We saw the need for a better support for data compression in OCaml, so for this
+thesis, we made it possible for OCaml programmers to use a wide range of
+compression algorithms. The algorithms are known to be correct since libarchive
+usually uses the reference implementations of these algorithms, where such
+implementations exist.
 
-One of the advantages of OCaml is that it is very expressive, so while there
-was much consideration about the API and implementation, it ended up being
-rather few lines compared to the C code which spends a lot of lines in managing
-memory thus dominating the line count.
+While implementing the binding, a number of shortcomings in libarchive itself
+were identified and patched. Thus this thesis has not only improved the
+situation for users of OStreamer, but all other users of libarchive can profit
+from the improvements in libarchive introduced as a product of this thesis.
+
 
 \section{Future improvements}
 \label{sec:future}
