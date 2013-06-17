@@ -91,6 +91,8 @@
 }
 
 \providecommand*{\listingautorefname}{Listing}
+% write section instead of subsection in the text, less awkward
+\renewcommand*{\subsectionautorefname}{section}
 \hyphenation{lib-ar-chi-ve}
 
 \begin{document}
@@ -1227,11 +1229,19 @@ match Pipe.construct raw_gz_file >>= Pipe.decompress with
 
 With the project in a well working state, it is useful to check on how this
 thesis has improved the situation in (not only) the OCaml ecosystem, where this
-could lead in the future and of course, what insights were gained in the
-process.
+work could lead to in the future and of course, what insights were gained in
+the process.
 
-\section{Achivements}
-\label{sec:achivements}
+\section{Future improvements}
+\label{sec:future}
+
+% other library bindings
+% optimization of stages
+
+TODO
+
+\section{Conclusion}
+\label{sec:conclusion}
 
 % What we did
 % Found a nice API
@@ -1239,23 +1249,36 @@ process.
 % Extended libarchive
 % Created compression library for OCaml
 
-We saw the need for a better support for data compression in OCaml, so for this
-thesis, we made it possible for OCaml programmers to use a wide range of
-compression algorithms. The algorithms are known to be correct since libarchive
-usually uses the reference implementations of these algorithms, where such
-implementations exist.
+In the beginning we illustrated different approaches on stream processing and
+identified a lack of useful compression libraries for OCaml. We created a
+binding for libarchive which improves on the type safety of the underlying C
+library by using advanced features of the OCaml type system as well as the
+garbage collection provided by its runtime. Out of this safe, low level library
+we created a higher level API which wraps the imperative-style low level
+binding into a functional style API that is simple and natural to use for
+programmers. As such, we have created a software that will fill a need for
+OCaml programmers and be a joy to use.
 
-While implementing the binding, a number of shortcomings in libarchive itself
-were identified and patched. Thus this thesis has not only improved the
-situation for users of OStreamer, but all other users of libarchive can profit
-from the improvements in libarchive introduced as a product of this thesis.
+In the process of the creation of the binding, we fixed deficiencies in
+libarchive as well as extended its functionality, contributing back the changes
+to the original project where it may benefit all users of libarchive, which
+reaches beyond the OCaml community\footnote{libarchive is packaged in all major
+Linux distributions, BSD systems and available for many other operating
+systems}.
 
+With this thesis, we also provided useful explanations on the OCaml C API and
+the interaction of the garbage collector which weren't yet available in one
+place. The previously existing documentation left some questions unanswered,
+like the reason many of the macros exist and when they are to be used.
 
-\section{Future improvements}
-\label{sec:future}
-
-\section{Conclusion}
-\label{sec:conclusion}
+We gained insights on how OCaml and the build tools around it work, how unit
+testing in OCaml can be implemented. We saw in \autoref{sec:errormonad} how
+seemingly complex topics like monads can be successfully used to create
+abstractions that make things \emph{easier} and more convenient. We ventured
+into the topic of type safety and used the type system to encode the state of
+the system to prevent programmer mistakes in \autoref{sec:phantom}. Over all,
+many topics were combined to create a unique and hopefully in the long run
+useful software.
 
 \printbibliography
 \end{document}
