@@ -144,7 +144,7 @@ languages utilize operators like \inline{first} and \inline{rest} to get the
 first element of the list and the remainder of the list. Consequent element can
 be expressed via recursive calls to \inline{first} and \inline{rest}. OCaml in
 particular provides \emph{pattern matching} and a special syntax to destructure
-lists in this way.
+lists in this way~\cite{hickey2013real}.
 
 An evolution of lists is the \emph{sequence} abstraction. Lists are limited by
 the available memory to hold all the records, whereas a sequence does not need
@@ -526,8 +526,12 @@ building OCaml projects.
 As such, while implementing this software, great care has been exercised to
 adhere to current OCaml community practices, so potential users and
 contributors will not be put off by idiosyncracies of software developed in
-isolation. This means that the software will use OASIS and the finished package
-will be available in the OPAM package directory under a Free Software license.
+isolation. This means, among others, that the software will use OASIS and the
+finished package will be available in the OPAM package directory under a Free
+Software license. It also means, that the software was written with an accepted
+style guide~\cite{ocamlstyle} in mind so any proficient OCaml programmer
+looking at the software is not distracted by unusual coding practices but can
+concentrate fully on the functionality.
 
 \section{Architecture}
 \label{sec:architecture}
