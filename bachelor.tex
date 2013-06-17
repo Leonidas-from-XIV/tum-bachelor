@@ -167,8 +167,10 @@ on top of it.
 \label{sec:solutions}
 
 Lazy streams are a feature that many languages support since there is one
-specific use-case that nearly all languages support and that can only be
-reasonably implemented with a variant of lazy streams: file handling.
+specific use-case that nearly all languages have to support and that can only
+be reasonably implemented with a variant of lazy streams: file handling.
+Therefore, looking at the usual way of handling files in each language is a
+good way to see how these kinds of streams are handled.
 
 Most systems allow files to grow much larger than the operating memory of the
 system, therefore holding all data in memory is infeasible. Some files might
@@ -186,10 +188,10 @@ The insights are used to propose of a good solution for OCaml.
 \label{sec:c}
 
 The C programming language is among the most widely used programming languages.
-The C programming language is from 1973\footnote{Beleg? K+R?} and lacking some
-modern features. The C type system essentially only knows about numbers:
-pointers are a special case of numbers and strings are also represented as
-arrays of numbers.
+It was designed in the 1970ies\cite{kernighan1988c} and being meant as a
+low-level language is missing some features that are considered modern today.
+The C type system essentially only knows about numbers: pointers are a special
+case of numbers and strings are also represented as arrays of numbers.
 
 Therefore, with the lack of syntactic support many libraries have to provide
 functionality using functions and macros. One very fundamental library for C is
