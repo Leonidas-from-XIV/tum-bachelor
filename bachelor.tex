@@ -785,9 +785,10 @@ programming language supports, we are free to constuct any kind of API that can
 be expressed in OCaml.
 
 In \autoref{sec:functional} we are going to go beyond an simple interface. We
-will leverage some advanced features of OCaml to provide additional safety on
-the API that will disallow certain errors at compile time as well as provide a
-natural way to deal with errors that happen on run time.
+will leverage some advanced features of OCaml to deal with errors that happen
+on run time as well as provide a vastly easier interface so people wanting to
+use it do not need to understand the functionality of the unterlying libarchive
+library.
 
 The lowest-level binding code for this thesis creates an OCaml wrapper for
 libarchive which is very similar to the C API of libarchive. This means the
