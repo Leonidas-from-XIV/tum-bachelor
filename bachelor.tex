@@ -823,20 +823,29 @@ libarchive do not go undetected.
 \subsection{Garbage collection}
 \label{sec:gc}
 
-Garbage collection is the process of reclaiming main memory from data that is
-not used anymore by the program. Garbage collection is a complicated process so
-many languages like OCaml, Java or Python include an automatic garbage
-collector which frees the memory on the heap when some data (a value or object)
-is not referenced from a program, usually due to a variable moving out of a
-function scope. In this case, the garbage collector runs and deletes the object
-so the memory can either be reused by the program or returned to the operating
-system.
+To free the low level interface from manual memory management, we leverage the
+OCaml runtime to do this for us. Essentially, we only want to create values. In
+an ideal world that would be enough since we'd have infinite memory.
+Unfortunately the amount of memory we have is limited, so the values which we
+have used and won't need any more have to be cleaned up. Fortunately, for this
+exact purpose we can employ garbage collection.
 
-Earlier languages like C only reclaim memory from variables that are stored on
-the stack. It a dynamic data structure is necessary, the programmer needs to
-manually \enquote{allocate} (reserve) memory on the heap using functions like
-\inline{malloc}. This memory is reserved for the whole runtime of the program
-unless the memory is freed using the \inline{free} function.
+Garbage collection is the process of reclaiming main memory from data that is
+not used anymore by the program. Manual memory management is a complicated
+process so many languages like OCaml, Java or Python include an automatic
+garbage collector which frees the memory on the heap when some data (a value or
+object) is not referenced from a program, usually due to a variable moving out
+of a function scope. In this case, the garbage collector runs and deletes the
+object so the memory can either be reused by the program or returned to the
+operating system. The concept of garbage collection is not new, it was invented
+in 1960~\cite{mccarthy1960recursive} and perfected since.
+
+Yet many other languages, among them C, only reclaim memory from variables that
+are stored on the stack. If a dynamic data structure is necessary, the
+programmer needs to manually \enquote{allocate} (reserve) memory on the heap
+using functions like \inline{malloc(3)}. This memory is reserved for the whole
+runtime of the program unless the memory is freed using the \inline{free(3)}
+function.
 
 The binding in this bachelor thesis is written in both C and OCaml, so one has
 to provide hints to the garbage collector of the OCaml runtime on how to treat
