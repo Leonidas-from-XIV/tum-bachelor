@@ -1032,14 +1032,15 @@ through a socket to some remote computer. In the latter case, saving the data
 to disk would serve no point.
 
 Therefore, the stream interface in this library needs libarchive to write the
-compressed data into memory. libarchive also provides such a function,
-unfortunately this function saves into a \emph{fixed} memory buffer. This
-creates a number of problems since it is not known how big an archive that is
-produced by libarchive will be. It might turn out very small on efficient
-compression, e.g. text, in which case a fixed buffer is not used and lot of
-memory is wasted. On the other hand, when compressing already compressed data
-like compressed music or movies, it might turn out even larger than before,
-thus overflowing a buffer.
+compressed data into memory as this is the most flexible alternative from which
+saving to a file or streaming to a remote computer can still be done.
+libarchive provides such a function, unfortunately this function saves into a
+\emph{fixed} memory buffer. This creates a number of problems since it is not
+known how big an archive that is produced by libarchive will be. It might turn
+out very small on efficient compression, e.g. text, in which case a fixed
+buffer is not used and lot of memory is wasted. On the other hand, when
+compressing already compressed data like compressed music or movies, it might
+turn out even larger than before, thus overflowing a buffer.
 
 To prevent overflows yet using the memory efficiently, the wrapper code in this
 thesis uses a smarter approach: the buffer is resized while writing the
