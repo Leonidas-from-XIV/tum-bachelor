@@ -529,16 +529,17 @@ platforms, see
 known for well-performing code. Thus the choice of OCaml as an implementation
 language is obvious.
 
-A recent advance in the OCaml community has been the introduction of OPAM, a
-package manager along with a catalogue of packages available for programmers.
-OPAM fills the same role for OCaml that systems like CPAN for Perl, the Python
-Package Index (PyPI) as well as the CTAN for \LaTeX fulfill. This development
-was made possible by the convergence to a common package description tool,
-OASIS. OASIS defines a format to describe package metainformation like name,
-version number, short description as well as instruction on how to build it.
-Apart from this format, OASIS can generate files to build the project similar
-to GNU autotools or CMake and also Cabal for Haskell, but with a focus on
-building OCaml projects.
+A recent advance in the OCaml community has been the introduction of
+OPAM~\cite{gazagnaire2013opam}, a package manager along with a catalogue of
+packages available for programmers.  OPAM fills the same role for OCaml that
+systems like CPAN for Perl, the Python Package Index (PyPI) as well as the CTAN
+for \LaTeX fulfill. This development was made possible by the convergence to a
+common package description tool, OASIS~\cite{legall2012oasis}. OASIS defines a
+format to describe package metainformation like name, version number, short
+description as well as instruction on how to build it.  Apart from this format,
+OASIS can generate files to build the project similar to GNU autotools or CMake
+and also Cabal for Haskell, but with a focus on building OCaml
+projects~\cite{legall2011quickstart}.
 
 As such, while implementing this software, great care has been exercised to
 adhere to current OCaml community practices, so potential users and
