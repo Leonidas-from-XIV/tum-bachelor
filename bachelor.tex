@@ -855,6 +855,10 @@ that are exposed to OCaml.
 \subsubsection{Handling OCaml values in C}
 \label{sec:gcvalue}
 
+For communicating with the C library, we need a way to make the OCaml values
+accessible to the C code, so it might work with the information contained in
+the OCaml values.
+
 As shown in \autoref{lst:simplewrap}, the values from OCaml are passed to be of
 the \inline{value} type in C. This type is opaque, so the actual implementation
 is not of particular interest.
@@ -909,12 +913,19 @@ with garbage collection.
 \subsubsection{Handling C values in OCaml}
 \label{sec:gcblock}
 
-Another issue arises when exposing pointers to C objects to OCaml code: the
-user has to take case of freeing the objects. For this problem, there are two
-possible solutions: either expose C functions to OCaml that handle freeing the
-allocated resources when the OCaml programmer knows he won't be using them
-furthermore or putting these objects under the control of the garbage collector
-of OCaml.
+As we have seen how to pass information from OCaml to C and get information
+back, we still have another issue open: how to deal with data that was returned
+from the C code. In most cases, it can be converted to OCaml values. Not all
+values \emph{can} be converted though, especially when the C code returns
+pointers to opaque structures. These don't have an useful OCaml representation,
+so it is best to just pass them as opaque values which will only be used as
+arguments to C functions that expect these kind of pointers.
+
+When getting a pointer from the C code, another problem arises: the user has to
+take case of freeing the objects. For this problem, there are two possible
+solutions: either expose C functions to OCaml that handle freeing the allocated
+resources when the OCaml programmer knows he won't be using them furthermore or
+putting these objects under the control of the garbage collector of OCaml.
 
 Both approaches have both advantages as well as disadvantages:
 
