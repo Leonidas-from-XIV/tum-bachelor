@@ -1078,6 +1078,34 @@ usage.
 \section{Functional streaming interface}
 \label{sec:functional}
 
+As the low level interface was implemented we had a way to do compression and
+decompression in OCaml via libarchive, but in a very inconvenient matter which
+has to do with the fact that the low level interface reflects the C interface
+from libarchive: each operation require quite a lot of set up to do a simple
+thing like extracting. If the functions required for set up would be called in
+an incorrect order, the system would just crash. Therefore, some higher level
+abstractions will be introduced to make the interface easier to use and the
+usage less error prone.
+
+We will make the interface less error prone by adding more information to the
+types by using phantom types, described in \autoref{sec:phantom}. Also, apart
+from programmer errors during programming, there might be errors happening on
+run time: the archive that is supposed to be read does not exist, the archive
+file is corrupt or maybe the data can't be written because the disk is full.
+For this, C code commonly uses special return values. The downside of this
+approach is that the programmer might forget to check the return value, so the
+program continues to run despite the error causing even more problems and
+\enquote{weird} behaviour.
+
+Some programming languages use \enquote{exceptions} instead — special error
+states that halt the normal execution so the programmer will have to deal with
+this exception. OCaml does support exceptions, yet working with exceptions in a
+functional style is inconvenient, as error handling and the function
+composition that is popular in functional code mixes poorly. To avoid these
+problems, the implementation of this thesis does not use exceptions but a
+different way to signal errors — the error monad which will be analyzed in
+depth in \autoref{sec:errormonad}.
+
 \subsection{Phantom types}
 \label{sec:phantom}
 
