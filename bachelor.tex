@@ -1302,10 +1302,29 @@ the process.
 \section{Future improvements}
 \label{sec:future}
 
-% other library bindings
-% optimization of stages
+While the work performed in this thesis presents a complete effort, it does not
+mean that there are no possibilities of improvement. The possible improvements
+that come to mind divide into two categories:
 
-TODO
+\begin{enumerate}
+  \item \emph{Stream type additions}: currently OStreamer supports working with
+    compressed data but is written with extensibility in mind. Support for
+    other types of data can be added, e.g. for audio data a binding to the
+    audio framework GStreamer\footnote{\url{http://gstreamer.freedesktop.org/}}
+    could be added. In fact, there are already OCaml bindings which could be
+    integrated easily into OStreamer. Similar with video data or other kinds of
+    data that can be conveniently represented as streams
+  \item \emph{Optimizations}: currently each operation in the chain runs in an
+    \enquote{eager} fashion: it immediately computes its result and provides
+    this result to the next link in the chain. This works well but leads to
+    unnecessary work in some cases: to decompress a ZIP file and recompress it
+    as compressed TAR file the data is currently decompressed in the C layer,
+    handed to the OCaml layer and then recompressed in the C layer in the new
+    format. Fortunately, libarchive can write directly to a new format, so
+    returning the decompressed data to OCaml is useless.  If the chain of
+    operations were first preprocessed first one could detect such roundtrips
+    and optimize the operations to increase the performance.
+\end{enumerate}
 
 \section{Conclusion}
 \label{sec:conclusion}
