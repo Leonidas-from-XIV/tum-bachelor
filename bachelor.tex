@@ -379,7 +379,7 @@ for (Stamp s : stamps) {
 Java has a very structured approach to input/output. There exists a distinction
 between binary streams, represented by \inline{InputStream} and
 \inline{OutputStream} and character input, handled by descendants of the
-\inline{Reader} and \inline{Writer} classes.
+\inline{Reader} and \inline{Writer} classes~\cite{flanagan2005java}.
 
 To handle binary data, one can use a class that inherits from the
 \inline{InputStream} or \inline{OutputStream} classes, depending on whether
@@ -395,12 +395,13 @@ streams, most notably the \inline{FileInputStream}/\inline{FileOutputStream}
 classes, which allow reading from files in the file system.
 
 To read a file, either the name of the file can be supplied to a
-\inline{FileInputStream} as well as a Java \inline{File} instance. The latter
-represents a file itself and not a handle to an opened file like \inline{FILE}
-in C. After creating an instance of the \inline{FileInputStream}, data can be
-read via its \inline{read} method which is very similar to the familiar
-\inline{fread} function from C: it reads a number of bytes into an array of
-byte-type at an optional offset and returns the number of bytes that were read.
+\inline{FileInputStream} or a Java \inline{File} instance. The latter
+represents a file in the file system itself~\cite{flanagan2005java} and not a
+handle to an opened file like \inline{FILE} in C. After creating an instance of
+the \inline{FileInputStream}, data can be read via its \inline{read} method
+which is very similar to the familiar \inline{fread} function from C: it reads
+a number of bytes into an array of byte-type at an optional offset and returns
+the number of bytes that were read.
 
 Handling text data is slightly more involved, since usually when dealing with
 character data it is useful to use \emph{buffered I/O} to be able to read and
