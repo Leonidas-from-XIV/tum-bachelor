@@ -449,9 +449,17 @@ very limited operations:
 
   \item Throw a \inline{StopIteration} exception after the last element was
 	  returned.  This is used to denote that the iterable was consumed and
-	  will not provide any more values.
+	  will not provide any more values~\cite{lutz2013learning}.
 
 \end{itemize}
+
+There is an additional indirection by the means of the \inline{\_\_iter\_\_}
+method: as an iterator is created e.g. by a for loop construct, the runtime
+calls the \inline{iter} built-in function with the object which in turn calls
+the objects \inline{\_\_iter\_\_} method which is expected to return an
+\emph{Iterable} that supports the aforementioned
+interface~\cite{lutz2013learning}. This iterable can be the object itself, as
+shown in the code listings.
 
 Python's built-in datatypes support this interface, therefore implementing
 these interfaces in custom types enables the standard Python syntax to use them
@@ -460,14 +468,20 @@ also strings and files as well. Thus implementing own custom streaming types is
 easy and convenient.
 
 \begin{listing}[H]
-  \inputminted[linenos]{python}{iterable.py}
-  \caption{An iterable in Python}
+  \inputminted[linenos]{python}{squares.py}
+  \caption{An iterable in Python~\cite{lutz2013learning}}
   \label{lst:pyiterable}
 \end{listing}
 
 \autoref{lst:pyiterable} shows a very simple implementation of an iterable
-object. The object returns values indefinitely, so just the first five are
-retrieved.
+object. The object returns a finite number of values, although infinite
+iterables are also possible as per \autoref{lst:pyiterableinfinite}.
+
+\begin{listing}[H]
+  \inputminted[linenos]{python}{iterable.py}
+  \caption{An infinite iterable, slicing off the first 5 elements}
+  \label{lst:pyiterableinfinite}
+\end{listing}
 
 Python also has additional syntactic support for so called \emph{generators}
 which are ordinary functions that use the \inline{yield} keyword instead of the
@@ -477,7 +491,8 @@ function to resume and run until the next \inline{yield} is reached.  Reaching
 the end of the function or a \inline{return} statement causes a
 \inline{StopIteration} exception being thrown. This exception is interpreted by
 the \inline{for} loop as end-marker, thus stopping to iterate over the
-generator. \autoref{lst:pygenerator} demonstrates a simple generator in action.
+generator~\cite{lutz2013learning}. \autoref{lst:pygenerator} demonstrates a
+simple generator in action.
 
 \begin{listing}[H]
   \inputminted[linenos]{python}{generator.py}

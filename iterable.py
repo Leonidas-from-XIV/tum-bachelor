@@ -1,3 +1,5 @@
+from itertools import islice
+
 class Counter:
     def __init__(self, start):
         self.start = start
@@ -11,7 +13,4 @@ class Counter:
         return self
 
 c = Counter(42)
-for index, value in enumerate(c):
-    if index >= 5:
-        break
-    print(value)
+print(list(islice(c, 5)))
