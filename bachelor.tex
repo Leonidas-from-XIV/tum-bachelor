@@ -143,9 +143,9 @@ data and multiple ways to organize this data were possible.
 
 One way to organize was using arrays of values on which one particular
 operation was executed. Some languages organizing data this way are
-APL~\cite{biancuzzi2009masterminds} and its sucessors J and K.  Another example
-is the x86 assembly language with its special-purpose MMX and SSE extensions
-which compute on sets of registers holding floating point values.
+APL~\cite[p.~53]{biancuzzi2009masterminds} and its sucessors J and K.  Another
+example is the x86 assembly language with its special-purpose MMX and SSE
+extensions which compute on sets of registers holding floating point values.
 
 An alternative is the \emph{list} abstraction. Seemingly similar to arrays, the
 high-level difference with lists is that lists do not usually have a fixed
@@ -205,7 +205,7 @@ The insights are used to propose of a good solution for OCaml.
 \label{sec:c}
 
 The C programming language is among the most widely used programming languages.
-It was designed in the 1970ies\cite{kernighan1988c} and being meant as a
+It was designed in the 1970ies\cite[p.~1]{kernighan1988c} and being meant as a
 low-level language is missing some features that are considered modern today.
 The C type system essentially only knows about numbers: pointers are a special
 case of numbers and strings are also represented as arrays of numbers.
@@ -249,7 +249,7 @@ data from the user, \inline{stdout} for writing output to the user and
 \begin{listing}[H]
   \inputminted[linenos]{c}{readfile.c}
   \caption{Reading file line by line in C, \inline{fgetline()} inspired by
-  \inline{getline(3)} from~\cite{kernighan1988c}}
+	  \inline{getline(3)}\cite[p.~165]{kernighan1988c}}
   \label{lst:creadfile}
 \end{listing}
 
@@ -328,7 +328,7 @@ for (Iterator i = stamps.iterator(); i.hasNext(); ) {
 }
   \end{minted}
   \caption{\enquote{Classic} Java style iteration, not type safe and without
-    syntactic sugar~\cite{bloch2008effective}}
+	  syntactic sugar~\cite[p.~110]{bloch2008effective}}
   \label{lst:jiter4}
 \end{listing}
 
@@ -342,33 +342,36 @@ iterating~\cite{horstmann2012core}.
   \begin{minted}[linenos]{java}
 // for loop with parametrized iterator declaration - typesafe
 for (Iterator<Stamp> i = stamps.iterator(); i.hasNext(); ) {
-    Stamp s = i.next();
+    Stamp s = i.next(); // No cast necessary
     ... // Do something with the stamp
 }
   \end{minted}
-  \caption{Type safe iteration without syntactic sugar~\cite{bloch2008effective}}
+  \caption{Type safe iteration without syntactic
+    sugar~\cite[p.~111]{bloch2008effective}}
   \label{lst:jiter}
 \end{listing}
 
-With the addition of generics in Java 1.5~\cite{bloch2008effective}, the
-\inline{next} method was changed to return an element of the containing type
-instead of an \inline{Object}, as seen in \autoref{lst:jiter}. This improves
-type safety, as the contents of the collection can now be statically tracked by
-the compiler and illegal accesses can be detected on compile time.
+With the addition of generics in Java 1.5~\cite[p.~109]{bloch2008effective},
+the \inline{next} method was changed to return an element of the containing
+type instead of an \inline{Object}, as seen in \autoref{lst:jiter}. This
+improves type safety, as the contents of the collection can now be statically
+tracked by the compiler and illegal accesses can be detected on compile time.
 
 Java 1.5 also extended the \inline{for} loop syntax to add a variant that can
 do the iterator management automatically, such a statement is called the
-\enquote{enhanced \inline{for} statement}~\cite{gosling2013java}. This type of
-\inline{for} loop creates the iterator on its own, as in \autoref{lst:jiter5}.
+\enquote{enhanced \inline{for} statement}~\cite[p.~309]{gosling2013java}. This
+type of \inline{for} loop creates the iterator on its own, as in
+\autoref{lst:jiter5}.
 
 \begin{listing}[H]
   \begin{minted}[linenos]{java}
 // for-each loop over a parametrized collection - typesafe
-for (Stamp s : stamps) {
+for (Stamp s : stamps) { // No cast
     ... // Do something with the stamp
 }
   \end{minted}
-  \caption{Java 1.5-style iteration with syntactic sugar~\cite{bloch2008effective}}
+  \caption{Java 1.5-style iteration with syntactic
+    sugar~\cite[p.~111]{bloch2008effective}}
   \label{lst:jiter5}
 \end{listing}
 
@@ -379,7 +382,7 @@ for (Stamp s : stamps) {
 Java has a very structured approach to input/output. There exists a distinction
 between binary streams, represented by \inline{InputStream} and
 \inline{OutputStream} and character input, handled by descendants of the
-\inline{Reader} and \inline{Writer} classes~\cite{flanagan2005java}.
+\inline{Reader} and \inline{Writer} classes~\cite[p.~254]{flanagan2005java}.
 
 To handle binary data, one can use a class that inherits from the
 \inline{InputStream} or \inline{OutputStream} classes, depending on whether
@@ -396,12 +399,12 @@ classes, which allow reading from files in the file system.
 
 To read a file, either the name of the file can be supplied to a
 \inline{FileInputStream} or a Java \inline{File} instance. The latter
-represents a file in the file system itself~\cite{flanagan2005java} and not a
-handle to an opened file like \inline{FILE} in C. After creating an instance of
-the \inline{FileInputStream}, data can be read via its \inline{read} method
-which is very similar to the familiar \inline{fread} function from C: it reads
-a number of bytes into an array of byte-type at an optional offset and returns
-the number of bytes that were read.
+represents a file in the file system itself~\cite[p.~252]{flanagan2005java} and
+not a handle to an opened file like \inline{FILE} in C. After creating an
+instance of the \inline{FileInputStream}, data can be read via its
+\inline{read} method which is very similar to the familiar \inline{fread}
+function from C: it reads a number of bytes into an array of byte-type at an
+optional offset and returns the number of bytes that were read.
 
 Handling text data is slightly more involved, since usually when dealing with
 character data it is useful to use \emph{buffered I/O} to be able to read and
@@ -428,8 +431,9 @@ Package Index \url{https://pypi.python.org/} lists over 32000 packages
 
 One important concept in Python is the so called \emph{duck-typing} in which
 there is no formal interface like in Java but rather objects that provide
-specific behaviors: \emph{If it walks like a duck and quacks like a duck,
-then it must be a duck}~\cite{lutz2013learning,olsen2011eloquent,clinton2009ruby}.
+specific behaviors: \emph{If it walks like a duck and quacks like a duck, then
+it must be a
+duck}~\cite{lutz2013learning}\cite[p.~89]{olsen2011eloquent}\cite[p.~51]{clinton2009ruby}.
 
 This means that every object can support any interface, as long as it provides
 the proper methods and returns the proper values. No special definitions are
@@ -574,7 +578,7 @@ A recent advance in the OCaml community has been the introduction of
 OPAM~\cite{gazagnaire2013opam}, a package manager along with a catalogue of
 packages available for programmers.  OPAM fills the same role for OCaml that
 systems like CPAN for Perl, the Python Package Index (PyPI) as well as the CTAN
-for \LaTeX fulfill. This development was made possible by the convergence to a
+for \LaTeX{} fulfill. This development was made possible by the convergence to a
 common package description tool, OASIS~\cite{legall2012oasis}. OASIS defines a
 format to describe package metainformation like name, version number, short
 description as well as instruction on how to build it.  Apart from this format,
