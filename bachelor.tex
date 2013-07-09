@@ -433,7 +433,9 @@ One important concept in Python is the so called \emph{duck-typing} in which
 there is no formal interface like in Java but rather objects that provide
 specific behaviors: \emph{If it walks like a duck and quacks like a duck, then
 it must be a
-duck}~\cite{lutz2013learning}\cite[p.~89]{olsen2011eloquent}\cite[p.~51]{clinton2009ruby}.
+duck}~\cite[p.~89]{olsen2011eloquent}\cite[p.~51]{clinton2009ruby}. The term
+duck-typing was coined by the community of the Ruby programming language but
+applies to Python as well.
 
 This means that every object can support any interface, as long as it provides
 the proper methods and returns the proper values. No special definitions are
@@ -453,7 +455,7 @@ very limited operations:
 
   \item Throw a \inline{StopIteration} exception after the last element was
 	  returned.  This is used to denote that the iterable was consumed and
-	  will not provide any more values~\cite{lutz2013learning}.
+	  will not provide any more values~\cite[p.~345]{lutz2009learning}.
 
 \end{itemize}
 
@@ -462,8 +464,8 @@ method: as an iterator is created e.g. by a for loop construct, the runtime
 calls the \inline{iter} built-in function with the object which in turn calls
 the objects \inline{\_\_iter\_\_} method which is expected to return an
 \emph{Iterable} that supports the aforementioned
-interface~\cite{lutz2013learning}. This iterable can be the object itself, as
-shown in the code listings.
+interface~\cite[p.~356]{lutz2009learning}. This iterable can be the object
+itself, as shown in the code listings.
 
 Python's built-in datatypes support this interface, therefore implementing
 these interfaces in custom types enables the standard Python syntax to use them
@@ -473,7 +475,7 @@ easy and convenient.
 
 \begin{listing}[H]
   \inputminted[linenos]{python}{squares.py}
-  \caption{An iterable in Python~\cite{lutz2013learning}}
+  \caption{An iterable in Python~\cite[p.~714]{lutz2009learning}}
   \label{lst:pyiterable}
 \end{listing}
 
@@ -495,8 +497,8 @@ function to resume and run until the next \inline{yield} is reached.  Reaching
 the end of the function or a \inline{return} statement causes a
 \inline{StopIteration} exception being thrown. This exception is interpreted by
 the \inline{for} loop as end-marker, thus stopping to iterate over the
-generator~\cite{lutz2013learning}. \autoref{lst:pygenerator} demonstrates a
-simple generator in action.
+generator~\cite[p.~714]{lutz2009learning}. \autoref{lst:pygenerator}
+demonstrates a simple generator in action.
 
 \begin{listing}[H]
   \inputminted[linenos]{python}{generator.py}
