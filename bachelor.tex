@@ -818,18 +818,23 @@ to the OCaml code.
 To create a sensible binding to libarchive we will start creating a layer of
 abstractions, to ease the usage of the binding. Abstractions like this are
 useful, because they ease the understanding of code, by hiding the irrelevant
-parts~\cite{liskov1986abstraction}. In our case, all management of memory is
-irrelevant since in OCaml we can let the runtime deal with memory management.
-Therefore, we construct a binding which hides this all and provides a somewhat
-more natural view of the libarchive API for high-level programmers.
+parts~\cite[p.~7]{liskov1986abstraction}. In our case, all management of memory
+is irrelevant since in OCaml we can let the runtime deal with memory
+management.  Therefore, we construct a binding which hides this all and
+provides a somewhat more natural view of the libarchive API for high-level
+programmers.
 
 We will start with a low-level abstraction which represents the C API of
 libarchive in OCaml, meaning that many functions will have similar names and do
 very similar things, except for memory management. From that, we are going to
-use what Barbara Liskov calls procedural abstractions to create a more
+use what Barbara Liskov calls \emph{procedural abstractions} to create a more
 convenient way to use the functionality that is not limited by what the C
 programming language supports, we are free to constuct any kind of API that can
-be expressed in OCaml.
+be expressed in OCaml. From the procedural abstractions we will create
+\emph{data abstraction} in \autoref{sec:functional} by wrapping the data to be
+processed in special data types and define functions to work on them. These
+functions will, at their core, use the procedural abstractions that we defined
+in the low-level binding.
 
 In \autoref{sec:functional} we are going to go beyond an simple interface. We
 will leverage some advanced features of OCaml to deal with errors that happen
