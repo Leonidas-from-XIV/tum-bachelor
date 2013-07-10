@@ -11,6 +11,8 @@
 \usepackage[normalem]{ulem}
 \usepackage{biblatex}
 \usepackage{haskelllogo}
+\usepackage{multicol}
+\usepackage{enumitem}
 
 \bibliography{bachelor}
 
@@ -1362,8 +1364,80 @@ match Pipe.construct raw_gz_file |> Pipe.decompress with
   \label{lst:bindpipe}
 \end{listing}
 
-% TODO section floating around, need to merge with stuff already written
-% API section
+\section{Interface}
+\label{sec:interface}
+
+This section describes the how to install and use OStreamer and what APIs are
+currently available.
+
+\subsection{API}
+\label{sec:api}
+
+\begin{multicols}{3}
+  \begin{itemize}[nolistsep]
+    \item \texttt{AllFilterReader}
+    \item \texttt{BZip2FilterReader}
+    \item \texttt{CompressFilterReader}
+    \item \texttt{GRZipFilterReader}
+    \item \texttt{GZipFilterReader}
+    \item \texttt{LRZipFilterReader}
+    \item \texttt{LZipFilterReader}
+    \item \texttt{LZMAFilterReader}
+    \item \texttt{LZOPFilterReader}
+    \item \texttt{NoneFilterReader}
+    \item \texttt{RPMFilterReader}
+    \item \texttt{UUFilterReader}
+    \item \texttt{XZFilterReader}
+  \end{itemize}
+\end{multicols}
+
+\begin{itemize}
+\item \texttt{SevenZipFormatReader}
+\item \texttt{AllFormatReader}
+\item \texttt{ARFormatReader}
+\item \texttt{CABFormatReader}
+\item \texttt{CPIOFormatReader}
+\item \texttt{GnuTARFormatReader}
+\item \texttt{ISO9660FormatReader}
+\item \texttt{LHAFormatReader}
+\item \texttt{MtreeFormatReader}
+\item \texttt{RARFormatReader}
+\item \texttt{RawFormatReader}
+\item \texttt{TARFormatReader}
+\item \texttt{XARFormatReader}
+\item \texttt{ZipFormatReader}
+\end{itemize}
+\begin{itemize}
+\item \texttt{Base64FilterWriter}
+\item \texttt{BZip2FilterWriter}
+\item \texttt{CompressFilterWriter}
+\item \texttt{GRZipFilterWriter}
+\item \texttt{GZipFilterWriter}
+\item \texttt{LRZipFilterWriter}
+\item \texttt{LZipFilterWriter}
+\item \texttt{LZMAFilterWriter}
+\item \texttt{LZOPFilterWriter}
+\item \texttt{NoneFilterWriter}
+\item \texttt{UUFilterWriter}
+\item \texttt{XZFilterWriter}
+\end{itemize}
+\begin{itemize}
+\item \texttt{SevenZipFormatWriter}
+\item \texttt{ARBSDFormatWriter}
+\item \texttt{ARSVR4FormatWriter}
+\item \texttt{CPIOFormatWriter}
+\item \texttt{CPIONEWCFormatWriter}
+\item \texttt{GnuTARFormatWriter}
+\item \texttt{ISO9660FormatWriter}
+\item \texttt{MtreeFormatWriter}
+\item \texttt{PAXFormatWriter}
+\item \texttt{RawFormatWriter}
+\item \texttt{SharFormatWriter}
+\item \texttt{USTARFormatWriter}
+\item \texttt{V7TARFormatWriter}
+\item \texttt{XARFormatWriter}
+\item \texttt{ZipFormatWriter}
+\end{itemize}
 
 It is useful to describe the lower level API first, since to understand the
 inner workings of the higher level API the details might be helpful. We start
@@ -1460,6 +1534,46 @@ val (|>): ErrorMonad.t -> (t -> ErrorMonad.d) -> ErrorMonad.t
 
 % TODO: merge in the part I wrote about the formats and filters
 
+
+\subsection{Usage}
+\label{sec:usage}
+
+To install OStreamer a number of prerequisites need to be installed:
+
+\begin{itemize}
+  \item OCaml, at best a version with native compilers (\texttt{ocamlopt.opt})
+	  tested with OCaml 4.00.1
+  \item OASIS, tested with 0.3.0
+  \item libarchive, a version newer than 3.1.2, e.g. the development version
+	  including commit \texttt{59cf95f5d9}. Development packages (if any)
+	  also need to be installed.
+\end{itemize}
+
+If the operating system or distribution ships an outdated version of
+libarchive, it can also be installed in a separate location. In that case, some
+adjustments need to be done to use the newer libarchive, in particular setting
+the GCC options to pick up the proper include files and to link agains the
+proper shared objects that include the patches written as part of this thesis.
+This issue will go away in the future when a new release of libarchive is made
+and included in the newest versions of the operating systems.
+
+The normal installation instructions are shown in \autoref{lst:compiling},
+along with a call to the unit test to verify the code works properly.
+
+\begin{listing}[H]
+  \begin{minted}[linenos]{bash}
+oasis setup
+ocaml setup.ml -configure
+ocaml setup.ml -build
+./unittest.native
+.....
+Ran: 5 tests in: 0.02 seconds.
+OK
+  \end{minted}
+  \caption{Compilation and testing of OStreamer}
+  \label{lst:compiling}
+\end{listing}
+
 % TODO Usage
 \begin{minted}[linenos]{ocaml}
 let test_pipe_decompress _ =
@@ -1471,8 +1585,6 @@ let test_pipe_decompress _ =
     | _ -> assert_failure "Did not decompress to a file")
   | ErrorMonad.Failure (code, str) -> assert_failure "Decompression failed"
 \end{minted}
-
-
 
 \chapter{Discussion}
 \label{sec:discussion}
