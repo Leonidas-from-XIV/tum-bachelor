@@ -171,14 +171,18 @@ element. As we saw, this restriction is not problematic as other ways to work
 with this data exist.
 
 These sequences might be \emph{lazy}, meaning that the sequence can be created
-without having to evaluate all values of itself. These values need only be
+without having to evaluate all values of it. These values need only be
 evaluated when the head of the sequence is requested.
 
-OCaml is currently missing a solid implementation of these streams, therefore
-the objective in this bachelor's thesis is to provide a functional
-implementation of streams that can be composed. The effectiveness of this
-stream library is then demonstrated by building a library for data compression
-on top of it.
+OCaml is currently missing a composable implementation of streams: the Stream
+module from the OCaml Standard Library is essentially an imperative API and
+uses exceptions whereas we are looking for an API that is more functional in
+spirit: The objective in this bachelor's thesis is to create an alternative API
+replacing exceptions with option types\footnote{We will actually use the error
+monad, introduced in \autoref{sec:errormonad}} which eliminate the danger of
+unchecked exceptions raising at runtime and at the same time improve
+composability. The effectiveness of this stream library is then demonstrated by
+building a library for data compression on top of it.
 
 \chapter{Overview of existing solutions}
 \label{sec:solutions}
@@ -213,7 +217,7 @@ case of numbers and strings are also represented as arrays of numbers.
 Therefore, with the lack of syntactic support many libraries have to provide
 functionality using functions and macros. One very fundamental library for C is
 the Standard Library (\enquote{stdlib}) which is usually provided by a library
-called \enquote{libc} and shipped by the operating system.
+called \enquote{libc} and shipped with the operating system.
 
 This basic library provides functions for handling strings, copying data in a
 convenient way, handling files and many more. In fact, handling files is one of
@@ -260,7 +264,7 @@ how the \inline{FILE} type is used.
 
 With a streaming API in place, there are a number of tasks that are a natural
 fit, for example compression of data. An uncompressed data stream gets in, a
-compressed stream comes out with the encryption function as a black box. Such
+compressed stream comes out with the compression function as a black box. Such
 compression algorithms exist for decades and are very popular and common.
 Examples include gzip~\cite{rfc1952} and
 bzip2\footnote{\url{http://bzip.org/}}, each tailored to different use cases:
