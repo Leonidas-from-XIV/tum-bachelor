@@ -522,19 +522,19 @@ required to provide a specific interface in a duck-typing manner.
 
 The first \enquote{file-like object} in Python was the object returned by the
 function \inline{open} which returns a reference to an open file, similar to
-\inline{fopen} in C. The type of this object is \inline{file} which explains
-the naming of \enquote{file-like} objects.
+\inline{fopen} in C\cite[p.~326]{chun2006core}. The type of this object is
+\inline{file} which explains the naming of \enquote{file-like} objects.
 
 A \enquote{file-like} object usually provides a minimal interface of a
 \inline{read} method for files that are meant for reading and \inline{write}
 for files that are meant for writing. \inline{read} takes an optional integer
 parameter which specifies how many bytes to read at maximum, whereas the
-default is to read the data until the end. The write method takes a
-string\footnote{Python 2.x uses the \inline{str}-bytestring type, Python 3.x
-uses either the \inline{str} Unicode string type or \inline{bytes} type} and
-writes it to the file. The interface is very simple but for real files it can
-also be extended by adding methods to seek inside of a file, getting the inode
-number of the file etc.
+default is to read the data until the end\cite[p.~329]{chun2006core}. The write
+method takes a string\footnote{Python 2.x uses the \inline{str}-bytestring
+type, Python 3.x uses either the \inline{str} Unicode string type or
+\inline{bytes} type} and writes it to the file. The interface is very simple
+but for real files it can also be extended by adding methods to seek inside of
+a file, getting the inode number of the file etc.
 
 \enquote{File-like} objects are very useful to deal with code that requires a
 reference to a file but the file to be used is not on a local file system and
