@@ -602,6 +602,11 @@ style guide~\cite{ocamlstyle} in mind so any proficient OCaml programmer
 looking at the software is not distracted by unusual coding practices but can
 concentrate fully on the functionality.
 
+The software is going to be called OStreamer, as a concatenation of
+\emph{O}Caml and \emph{Streams} with a small nod to the G\emph{Streamer}
+multimedia framework. This name was chosen as not too exotic sounding yet
+sufficiently distinctive, unique and memorable.
+
 \section{Architecture}
 \label{sec:architecture}
 
@@ -666,11 +671,11 @@ that is usually expected from a compression library.
 \subsection{libarchive}
 \label{sec:libarchive}
 
-As an alternative, there exists a library named
-libarchive\footnote{\url{http://www.libarchive.org/}} is a library designed to
-handle all compression needs for low-level programming. This is very useful for
-us, as it provides us with many features that we will need in implementing this
-thesis.
+As an alternative to using the above, there exists a library named
+libarchive\footnote{\url{http://www.libarchive.org/}}, which is designed to
+handle all compression needs for low-level programming in C. This is very
+useful for us, as it provides us with many features that we will need in
+implementing this thesis.
 
 Libarchive originated in the FreeBSD project but is also used by many other
 systems. One of the problems before libarchive was that different libraries
@@ -690,18 +695,18 @@ Libarchive solves this by providing a common interface to two mechanisms:
 container formats, called \enquote{formats} in libarchive as well as
 compression formats, called \enquote{filters}. Not all formats that can be read
 can also be written, but the variety of options that libarchive supports is
-quite huge.
+quite large.
 
-Formats supported be libarchive include:
+Formats supported by libarchive include:
 
 \begin{itemize}
   \item \emph{7z}, the compression format of 7-Zip
   \item \emph{AR}, used for static libraries in Unix
-  \item \emph{CAB}, Microsoft cabinet files for installers, read-only support
+  \item \emph{CAB}, Microsoft cabinet files for installers (read-only support)
   \item \emph{CPIO}, initial ramdisk for booting a GNU/Linux system
   \item \emph{ISO 9660}, CD-ROM image files
-  \item \emph{LHA}, popular compression format in Japan, read-only support
-  \item \emph{RAR}, compression format of WinRAR, read-only support
+  \item \emph{LHA}, popular compression format in Japan (read-only support)
+  \item \emph{RAR}, compression format of WinRAR (read-only support)
   \item \emph{TAR}, typical file exchange format in Unix systems, with
     \emph{ustar}, \emph{GNU} and \emph{PAX} variants supported.
   \item \emph{XAR}, format used by the RPM5 package manager
@@ -823,10 +828,10 @@ To create a sensible binding to libarchive we will start creating a layer of
 abstractions, to ease the usage of the binding. Abstractions like this are
 useful, because they ease the understanding of code, by hiding the irrelevant
 parts~\cite[p.~7]{liskov1986abstraction}. In our case, all management of memory
-is irrelevant since in OCaml we can let the runtime deal with memory
-management.  Therefore, we construct a binding which hides this all and
-provides a somewhat more natural view of the libarchive API for high-level
-programmers.
+is irrelevant since in OCaml we can let the garbage collector deal with memory
+management.  Therefore, we construct a binding which hides these implementation
+details and provides a somewhat more natural view of the libarchive API for
+high-level programmers.
 
 We will start with a low-level abstraction which represents the C API of
 libarchive in OCaml, meaning that many functions will have similar names and do
@@ -890,11 +895,11 @@ Garbage collection is the process of reclaiming main memory from data that is
 not used anymore by the program. Manual memory management is a complicated
 process so many languages like OCaml, Java or Python include an automatic
 garbage collector which frees the memory on the heap when some data (a value or
-object) is not referenced from a program, usually due to a variable moving out
-of a function scope. In this case, the garbage collector runs and deletes the
-object so the memory can either be reused by the program or returned to the
-operating system. The concept of garbage collection is not new, it was invented
-in 1960~\cite{mccarthy1960recursive} and perfected since.
+object) is not referenced from a program anymore, usually due to a variable
+moving out of a function scope. In this case, the garbage collector runs and
+deletes the object so the memory can either be reused by the program or
+returned to the operating system. The concept of garbage collection is not new,
+it was invented in 1960~\cite{mccarthy1960recursive} and perfected since.
 
 Yet many other languages, among them C, only reclaim memory from variables that
 are stored on the stack. If a dynamic data structure is necessary, the
