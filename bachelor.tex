@@ -1373,6 +1373,12 @@ currently available.
 \subsection{API}
 \label{sec:api}
 
+There is a number of filters for reading that can be selected, most notable the
+\inline{AllFilterReader} which reads all formats which libarchive is able to
+recognize. The only exception is the \inline{NoneFilterReader}, which is
+required to read archives that are not wrapped in a filter, e.g. when reading
+TAR files that are not compressed.
+
 \begin{multicols}{3}
   \begin{itemize}[nolistsep]
     \item \texttt{AllFilterReader}
@@ -1391,53 +1397,66 @@ currently available.
   \end{itemize}
 \end{multicols}
 
-\begin{itemize}
-\item \texttt{SevenZipFormatReader}
-\item \texttt{AllFormatReader}
-\item \texttt{ARFormatReader}
-\item \texttt{CABFormatReader}
-\item \texttt{CPIOFormatReader}
-\item \texttt{GnuTARFormatReader}
-\item \texttt{ISO9660FormatReader}
-\item \texttt{LHAFormatReader}
-\item \texttt{MtreeFormatReader}
-\item \texttt{RARFormatReader}
-\item \texttt{RawFormatReader}
-\item \texttt{TARFormatReader}
-\item \texttt{XARFormatReader}
-\item \texttt{ZipFormatReader}
-\end{itemize}
-\begin{itemize}
-\item \texttt{Base64FilterWriter}
-\item \texttt{BZip2FilterWriter}
-\item \texttt{CompressFilterWriter}
-\item \texttt{GRZipFilterWriter}
-\item \texttt{GZipFilterWriter}
-\item \texttt{LRZipFilterWriter}
-\item \texttt{LZipFilterWriter}
-\item \texttt{LZMAFilterWriter}
-\item \texttt{LZOPFilterWriter}
-\item \texttt{NoneFilterWriter}
-\item \texttt{UUFilterWriter}
-\item \texttt{XZFilterWriter}
-\end{itemize}
-\begin{itemize}
-\item \texttt{SevenZipFormatWriter}
-\item \texttt{ARBSDFormatWriter}
-\item \texttt{ARSVR4FormatWriter}
-\item \texttt{CPIOFormatWriter}
-\item \texttt{CPIONEWCFormatWriter}
-\item \texttt{GnuTARFormatWriter}
-\item \texttt{ISO9660FormatWriter}
-\item \texttt{MtreeFormatWriter}
-\item \texttt{PAXFormatWriter}
-\item \texttt{RawFormatWriter}
-\item \texttt{SharFormatWriter}
-\item \texttt{USTARFormatWriter}
-\item \texttt{V7TARFormatWriter}
-\item \texttt{XARFormatWriter}
-\item \texttt{ZipFormatWriter}
-\end{itemize}
+Again, there is support for all formats that libarchive supports.
+\inline{AllFormatReader} reads all formats, except for uncompressed files like
+files that are only compressed using \emph{GZip}. These need to be read using
+the \inline{RawFormatReader}, because the decompression is already handled by
+the filter.
+
+\begin{multicols}{3}
+  \begin{itemize}[nolistsep]
+     \item \texttt{SevenZipFormatReader}
+     \item \texttt{AllFormatReader}
+     \item \texttt{ARFormatReader}
+     \item \texttt{CABFormatReader}
+     \item \texttt{CPIOFormatReader}
+     \item \texttt{GnuTARFormatReader}
+     \item \texttt{ISO9660FormatReader}
+     \item \texttt{LHAFormatReader}
+     \item \texttt{MtreeFormatReader}
+     \item \texttt{RARFormatReader}
+     \item \texttt{RawFormatReader}
+     \item \texttt{TARFormatReader}
+     \item \texttt{XARFormatReader}
+     \item \texttt{ZipFormatReader}
+  \end{itemize}
+\end{multicols}
+
+\begin{multicols}{3}
+  \begin{itemize}[nolistsep]
+    \item \texttt{Base64FilterWriter}
+    \item \texttt{BZip2FilterWriter}
+    \item \texttt{CompressFilterWriter}
+    \item \texttt{GRZipFilterWriter}
+    \item \texttt{GZipFilterWriter}
+    \item \texttt{LRZipFilterWriter}
+    \item \texttt{LZipFilterWriter}
+    \item \texttt{LZMAFilterWriter}
+    \item \texttt{LZOPFilterWriter}
+    \item \texttt{NoneFilterWriter}
+    \item \texttt{UUFilterWriter}
+    \item \texttt{XZFilterWriter}
+  \end{itemize}
+\end{multicols}
+\begin{multicols}{3}
+  \begin{itemize}[nolistsep]
+    \item \texttt{SevenZipFormatWriter}
+    \item \texttt{ARBSDFormatWriter}
+    \item \texttt{ARSVR4FormatWriter}
+    \item \texttt{CPIOFormatWriter}
+    \item \texttt{CPIONEWCFormatWriter}
+    \item \texttt{GnuTARFormatWriter}
+    \item \texttt{ISO9660FormatWriter}
+    \item \texttt{MtreeFormatWriter}
+    \item \texttt{PAXFormatWriter}
+    \item \texttt{RawFormatWriter}
+    \item \texttt{SharFormatWriter}
+    \item \texttt{USTARFormatWriter}
+    \item \texttt{V7TARFormatWriter}
+    \item \texttt{XARFormatWriter}
+    \item \texttt{ZipFormatWriter}
+  \end{itemize}
+\end{multicols}
 
 It is useful to describe the lower level API first, since to understand the
 inner workings of the higher level API the details might be helpful. We start
