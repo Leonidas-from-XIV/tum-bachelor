@@ -271,28 +271,28 @@ bzip2\footnote{\url{http://bzip.org/}}, each tailored to different use cases:
 good compression ratio, fast decompression, good compression ratios on specific
 types of data etc.
 
-Libraries for these algorithms are often implemented in C
-(\inline{zlib} for gzip, \inline{libbz2} for bzip2) or at least have an
-interface to be used from C (LZMA reference implementation\footnote{7-Zip
-project, \url{http://www.7-zip.org/}}), therefore giving implementers in C a
-wide variety to choose from. Unfortunately, these libraries all provide
-different APIs, so just switching the compression algorithm from gzip to bzip2
-is not very convenient.  This problem can be solved with
+Libraries for these algorithms are often implemented in C (\inline{zlib} for
+gzip, \inline{libbz2} for bzip2) or at least have an interface to be used from
+C (LZMA reference implementation\footnote{7-Zip project,
+\url{http://www.7-zip.org/}}), therefore giving implementers in C a wide
+variety to choose from. Unfortunately, these libraries all provide different
+APIs, so just switching the compression algorithm from gzip to bzip2 is not
+very convenient.  This problem is adressed by
 libarchive\footnote{\url{http://www.libarchive.org}}, a wrapper around a huge
 amount of different compression libraries. Furthermore, libarchive provides
 implementations of common container formats like \inline{TAR} or \inline{ZIP}.
 
-Fortunately, since the C application binary interface is mostly
-standarized\footnote{TODO: stdcall, C calling conventiosn, Belege} and the
-calling conventions are both simple and commonly understood, most languages
-provide interfaces to call C code, thus implementing the compression algorithms
-in C the most common denominator for a range of languages. These interfaces can
-range quite different: from compatibility and linking directly to C code like
-C++ does, to dynamically loading the C libraries on runtime via \inline{dlopen}
-like Python. OCaml goes a middle way, by requiring glue code in C that
-interfaces the C libraries and returns OCaml data types to the OCaml run time.
-These functions are then fitted with OCaml type signatures and can then be
-directly called from the code as if they were written in OCaml as well.
+Fortunately, since the C application binary interface is mostly standarized and
+the calling conventions are both simple and commonly understood, most
+programming languages provide interfaces to call C code, thus implementing the
+compression algorithms in C is the most common denominator for a range of
+languages. These interfaces can range quite different: from compatibility and
+linking directly to C code like C++ does, to dynamically loading the C
+libraries on runtime via \inline{dlopen} like Python. OCaml goes a middle way,
+by requiring glue code in C that interfaces the C libraries and returns OCaml
+data types to the OCaml run time.  These functions are then fitted with OCaml
+type signatures and can then be directly called from the code as if they were
+written in OCaml as well.
 
 The primary objective of this bachelor's thesis is not to implement compression
 algorithms, so using libarchive as a way to implement compression functionality
@@ -325,9 +325,8 @@ thrown.
 
 \begin{listing}[H]
   \begin{minted}[linenos]{java}
-// Now a raw iterator type - don't do this!
 for (Iterator i = stamps.iterator(); i.hasNext(); ) {
-	Stamp s = (Stamp) i.next(); // Throws ClassCastException
+	Stamp s = (Stamp) i.next(); // might throw ClassCastException
     ... // Do something with the stamp
 }
   \end{minted}
@@ -359,7 +358,7 @@ With the addition of generics in Java 1.5~\cite[p.~109]{bloch2008effective},
 the \inline{next} method was changed to return an element of the containing
 type instead of an \inline{Object}, as seen in \autoref{lst:jiter}. This
 improves type safety, as the contents of the collection can now be statically
-tracked by the compiler and illegal accesses can be detected on compile time.
+tracked by the compiler and illegal accesses can be detected at compile time.
 
 Java 1.5 also extended the \inline{for} loop syntax to add a variant that can
 do the iterator management automatically, such a statement is called the
@@ -398,8 +397,9 @@ Python's file-like objects have adopted similar semantics. In Java, these types
 of handles are distinguished at compile-time.
 
 The Java standard library supplies a number of different types of these
-streams, most notably the \inline{FileInputStream}/\inline{FileOutputStream}
-classes, which allow reading from files in the file system.
+streams, most notably the \inline{FileInputStream} and
+\inline{FileOutputStream} classes, which allow reading from files in the file
+system.
 
 To read a file, either the name of the file can be supplied to a
 \inline{FileInputStream} or a Java \inline{File} instance. The latter
@@ -585,7 +585,7 @@ OPAM~\cite{gazagnaire2013opam}, a package manager along with a catalogue of
 packages available for programmers.  OPAM fills the same role for OCaml that
 systems like CPAN for Perl, the Python Package Index (PyPI) as well as the CTAN
 for \LaTeX{} fulfill. This development was made possible by the convergence to a
-common package description tool, OASIS~\cite{legall2012oasis}. OASIS defines a
+common package description tool: OASIS~\cite{legall2012oasis}. OASIS defines a
 format to describe package metainformation like name, version number, short
 description as well as instruction on how to build it.  Apart from this format,
 OASIS can generate files to build the project similar to GNU autotools or CMake
