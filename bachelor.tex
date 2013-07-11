@@ -1356,6 +1356,98 @@ match Pipe.construct raw_gz_file >>= Pipe.decompress with
   \label{lst:bindpipe}
 \end{listing}
 
+% TODO section floating around, need to merge with stuff already written
+% API section
+
+It is useful to describe the lower level API first, since to understand the
+inner workings of the higher level API the details might be helpful. We start
+with the definition of the libarchive handles, but unlike libarchive these are
+of distinct types and can be annotated with extra values, they are called
+\inline{r} for read handles and \inline{w} for write handles. Short names were
+chosen, since the user of OStreamer only needs to pass these around, never to
+create them. For the initialization of such a handle, the programmer has to
+call \inline{read\_new\_configured} or \inline{write\_new\_configured} with a
+list of filters to select the compression type.
+
+\begin{minted}[linenos]{ocaml}
+type 'a r
+type 'a w
+val read_new_configured: read_format list -> read_filter list -> [`Empty] r
+val write_new_configured: write_format -> write_filter list -> [`Closed] w
+\end{minted}
+
+The resulting value is an \enquote{empty} read handle, since no compressed data was yet
+fed into libarchive that could be decompressed. Similarly, the write handle is
+\enquote{closed}, since there was no space allocated to write the data to.
+
+To decompress data, one first has to \inline{feed\_data} to the handle which
+makes the handle change state from an \enquote{empty} to \enquote{populated}.
+Only from this state can data be extracted, which happens with
+\inline{extract\_all}.
+
+\begin{minted}[linenos]{ocaml}
+val feed_data: [`Empty] r -> string -> [`Populated] r
+val extract_all: [`Populated] r -> ost_entry list ErrorMonad.t
+\end{minted}
+
+The result of the call to \inline{extract\_all} is a list of
+\inline{ost\_entry} types wrapped in an error monad. The error monad can either
+contain this list or a error message containing the reason why extraction of
+these files failed (unknown format, corrupted archive).
+\inline{entry\_metadata} closely matches the \inline{entry} type of libarchive
+itself and represents the meta data of an item that can be contained in an
+archive:
+
+\begin{minted}[linenos]{ocaml}
+type entry_metadata =
+  {
+    pathname: string;
+    filetype: Unix.file_kind;
+    atime: float option;
+    birthtime: float option;
+    ctime: float option;
+    mtime: float option;
+    gid: int64;
+    gname: string option;
+    size: int64 option;
+    uid: int64;
+    uname: string option;
+  }
+type ost_entry = File of string * entry_metadata | Directory of entry_metadata
+\end{minted}
+
+Some of these values are optional, thus represented as option types. The file
+type gets translated from C to the \inline{Unix.file\_kind} type in OCaml. Most
+common values are \inline{S\_REG} for regular files and \inline{S\_DIR} for
+directories. The content of regular files is represented as an union type,
+\inline{ost\_entry}, which is useful when iterating over archive entries since
+it forces the programmer to handle all defined file types, thus potentially
+improving the quality of programs since they need to handle these cases.
+
+When writing, an analogous set of operations exist. A \enquote{closed} handle
+has to be converted into an \enquote{opened} handle, which is done by
+\inline{write\_open\_memory}, which allocates an automatically managed region
+of memory into which the archive can be written. To write a single entry to the
+archive, there exists the function \inline{write\_close} which takes a write
+handle and an entry and returns the write handle. The write handle is not
+changed but returning the handle improves composability, since it can be
+combined in accumulating functions like \inline{fold\_left}.
+
+\begin{minted}[linenos]{ocaml}
+val write_open_memory: [`Closed] w -> [`Open] w
+val write_entry: [`Open] w -> ost_entry -> [`Open] w
+val write_close: [`Open] w -> string ErrorMonad.t
+\end{minted}
+
+The data is written in a lazy fashion by libarchive, so to retrieve the
+compressed archive, the write handle has to be closed, using
+\inline{write\_close}, which returns either the compressed data or an error
+message via the error monad type.
+
+% TODO: merge in the part I wrote about the formats and filters
+
+
+
 \chapter{Discussion}
 \label{sec:discussion}
 
