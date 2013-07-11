@@ -1373,11 +1373,32 @@ currently available.
 \subsection{API}
 \label{sec:api}
 
-There is a number of filters for reading that can be selected, most notable the
-\inline{AllFilterReader} which reads all formats which libarchive is able to
-recognize. The only exception is the \inline{NoneFilterReader}, which is
+It is best to describe the lower level API first, since to understand the
+inner workings of the higher level API the details might be helpful. We start
+with the definition of the libarchive handles, but unlike libarchive these are
+of distinct types and can be annotated with extra values, they are called
+\inline{r} for read handles and \inline{w} for write handles. Short names were
+chosen, since the user of OStreamer only needs to pass these around, never to
+create them. For the initialization of such a handle, the programmer has to
+call \inline{read\_new\_configured} or \inline{write\_new\_configured} with a
+list of filters to select the compression type.
+
+\begin{minted}[linenos]{ocaml}
+type 'a r
+type 'a w
+val read_new_configured: read_format list -> read_filter list -> [`Empty] r
+val write_new_configured: write_format -> write_filter list -> [`Closed] w
+\end{minted}
+
+The resulting value is an \enquote{empty} read handle, since no compressed data was yet
+fed into libarchive that could be decompressed. Similarly, the write handle is
+\enquote{closed}, since there was no space allocated to write the data to.
+
+The filters that are possible for reading files are listed below, most notably
+the \inline{AllFilterReader} which reads all formats which libarchive is able
+to recognize. The only exception is the \inline{NoneFilterReader}, which is
 required to read archives that are not wrapped in a filter, e.g. when reading
-TAR files that are not compressed.
+TAR files that are not compressed. More than one filter can be selected.
 
 \begin{multicols}{3}
   \begin{itemize}[nolistsep]
@@ -1397,11 +1418,11 @@ TAR files that are not compressed.
   \end{itemize}
 \end{multicols}
 
-Again, there is support for all formats that libarchive supports.
-\inline{AllFormatReader} reads all formats, except for uncompressed files like
-files that are only compressed using \emph{GZip}. These need to be read using
-the \inline{RawFormatReader}, because the decompression is already handled by
-the filter.
+The possible formats for reading include all formats that libarchive supports.
+\inline{AllFormatReader} reads all formats, except for uncompressed files. An
+example of such data are files that are only compressed using \emph{GZip}.
+These need to be read using the \inline{RawFormatReader}, because the
+decompression is already handled by the filter.
 
 \begin{multicols}{3}
   \begin{itemize}[nolistsep]
@@ -1422,6 +1443,11 @@ the filter.
   \end{itemize}
 \end{multicols}
 
+Similar to reading, there are also filters for writing, although a smaller
+amount, since not every filter that can be read can also be written. In the
+case of writing the data, the filter has to be chosen manually and can't be
+chosen automatically.
+
 \begin{multicols}{3}
   \begin{itemize}[nolistsep]
     \item \texttt{Base64FilterWriter}
@@ -1438,6 +1464,10 @@ the filter.
     \item \texttt{XZFilterWriter}
   \end{itemize}
 \end{multicols}
+
+The same goes for the write format, it has to be chosen manually. There can
+only be one write format chosen per handle.
+
 \begin{multicols}{3}
   \begin{itemize}[nolistsep]
     \item \texttt{SevenZipFormatWriter}
@@ -1457,27 +1487,6 @@ the filter.
     \item \texttt{ZipFormatWriter}
   \end{itemize}
 \end{multicols}
-
-It is useful to describe the lower level API first, since to understand the
-inner workings of the higher level API the details might be helpful. We start
-with the definition of the libarchive handles, but unlike libarchive these are
-of distinct types and can be annotated with extra values, they are called
-\inline{r} for read handles and \inline{w} for write handles. Short names were
-chosen, since the user of OStreamer only needs to pass these around, never to
-create them. For the initialization of such a handle, the programmer has to
-call \inline{read\_new\_configured} or \inline{write\_new\_configured} with a
-list of filters to select the compression type.
-
-\begin{minted}[linenos]{ocaml}
-type 'a r
-type 'a w
-val read_new_configured: read_format list -> read_filter list -> [`Empty] r
-val write_new_configured: write_format -> write_filter list -> [`Closed] w
-\end{minted}
-
-The resulting value is an \enquote{empty} read handle, since no compressed data was yet
-fed into libarchive that could be decompressed. Similarly, the write handle is
-\enquote{closed}, since there was no space allocated to write the data to.
 
 To decompress data, one first has to \inline{feed\_data} to the handle which
 makes the handle change state from an \enquote{empty} to \enquote{populated}.
@@ -1543,16 +1552,14 @@ compressed archive, the write handle has to be closed, using
 \inline{write\_close}, which returns either the compressed data or an error
 message via the error monad type.
 
-This concludes the low level API. From this point the high level API was constructed and is a lot simpler.
+This concludes the low level API. From this point the high level API was
+constructed and is a lot simpler.
 
 % TODO add compress
 \begin{minted}[linenos]{ocaml}
 val decompress: string -> ost_entry list ErrorMonad.t
 val (|>): ErrorMonad.t -> (t -> ErrorMonad.d) -> ErrorMonad.t
 \end{minted}
-
-% TODO: merge in the part I wrote about the formats and filters
-
 
 \subsection{Usage}
 \label{sec:usage}
