@@ -1553,13 +1553,23 @@ compressed archive, the write handle has to be closed, using
 message via the error monad type.
 
 This concludes the low level API. From this point the high level API was
-constructed and is a lot simpler.
+constructed and is a lot simpler to use.
 
-% TODO add compress
 \begin{minted}[linenos]{ocaml}
+val construct: 'a -> 'a ErrorMonad.t
+val compress: write_format -> write_filter list -> ost_entry list -> string ErrorMonad.t
 val decompress: string -> ost_entry list ErrorMonad.t
-val (|>): ErrorMonad.t -> (t -> ErrorMonad.t) -> ErrorMonad.t
+val (|>): 'a ErrorMonad.t -> ('a -> 'b ErrorMonad.t) -> 'b ErrorMonad.t
 \end{minted}
+
+A typical use of the API constructs a pipe of operations to be performed. The
+data to be processed is fed into the pipe using \inline{construct}, then zero
+or more operations like \inline{decompress} or \inline{compress} can be chained
+using the \inline{|>} operator, very similar to how data can be processed in
+Unix shells. Ath the end of the processing, an \inline{ErrorMonad} type is
+returned which can be pattern matched to get the resulting value, or in the
+case of an error, the error message. A sample usage of the high level API shown
+in in \autoref{sec:usage}.
 
 \subsection{Usage}
 \label{sec:usage}
@@ -1592,8 +1602,8 @@ oasis setup
 ocaml setup.ml -configure
 ocaml setup.ml -build
 ./unittest.native
-.....
-Ran: 5 tests in: 0.02 seconds.
+......
+Ran: 6 tests in: 0.02 seconds.
 OK
   \end{minted}
   \caption{Compilation and testing of OStreamer}
