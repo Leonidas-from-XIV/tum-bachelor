@@ -917,7 +917,7 @@ that are exposed to OCaml.
 \label{sec:gcvalue}
 
 For communicating with the C library, we need a way to make the OCaml values
-accessible to the C code, so it might work with the information contained in
+accessible to the C code, so we can work with the information contained in
 the OCaml values.
 
 As shown in \autoref{lst:simplewrap}, the values from OCaml are passed to be of
@@ -930,14 +930,13 @@ one argument} to register the parameter of the function, in case of
 \autoref{lst:simplewrap}, \inline{unit}, to the garbage collector as being in
 use, so it is not allowed to collect it just yet.  In addition, if the garbage
 collector decides to move the memory block\footnote{the OCaml garbage collector
-not only frees memory but also reorders the memory to minimize
-fragmentation in a process called \enquote{compaction}} that holds the value,
-it needs to update the pointer that \inline{unit} points to, therefore such a
-variable needs to be registered to the GC first. In this example, the value
-passed is an instance of the OCaml unit type, which does not hold information
-that would require being extracted. Yet it is required, since OCaml functions
-are required to have one argument, so it is customary to pass an argument of
-unit type.
+not only frees memory but also reorders the memory to minimize fragmentation in
+a process called \enquote{compaction}} that holds the value, it needs to update
+the pointer that \inline{unit} points to, therefore such a variable needs to be
+registered to the GC first. In this example, the value passed is an instance of
+the OCaml unit type, which does not hold information that would require being
+extracted. Yet it is required, since OCaml functions are required to have at
+least one argument, so it is customary to pass an argument of unit type.
 
 Second, a new local variable is created, \inline{r}, which will hold an OCaml
 value. It also notifies the GC of the presence of this variable to prevent its
@@ -956,7 +955,7 @@ As an optimization, the fact that the memory \emph{can} be discarded does not
 mean that it \emph{is} immediately discarded. As a run of the garbage collector
 takes time, the collection is usually delayed until enough \enquote{garbage}
 has piled up. Very short programs may not ever see a run of the garbage
-collectior since when the program terminates all memory is freed automatically,
+collector since when the program terminates all memory is freed automatically,
 so collection of garbage immediately before exiting would only cause slowdown.
 
 This optimization also has the downside that failures in memory handling are
@@ -983,7 +982,7 @@ so it is best to just pass them as opaque values which will only be used as
 arguments to C functions that expect these kind of pointers.
 
 When getting a pointer from the C code, another problem arises: the user has to
-take case of freeing the objects. For this problem, there are two possible
+take care of freeing the objects. For this problem, there are two possible
 solutions: either expose C functions to OCaml that handle freeing the allocated
 resources when the OCaml programmer knows he won't be using them furthermore or
 putting these objects under the control of the garbage collector of OCaml.
@@ -1000,7 +999,9 @@ Both approaches have both advantages as well as disadvantages:
   \item Implicit garbage collection has the advantage of never forgetting to
     free memory blocks, although it might take some time until the garbage
     collector decides to free the memory. This is a common behaviour for
-    values returned from ordinary functions implemented in OCaml code.
+    values returned from ordinary functions implemented in OCaml code. This is
+    also what a naive OCaml programmer would expect from a library, not
+    knowing whether it calls C code or is a pure OCaml library.
 \end{itemize}
 
 For the binding, it was decided to be consistent with the OCaml language and
@@ -1062,11 +1063,15 @@ The C code wrapper therefore uses two different structs to deal with these:
 \enquote{shared} entries get the default OCaml finalizer implementation which
 does nothing, because the entry \emph{will} be freed by libarchive. Freeing it
 would be an error, because then libarchive would later free the entry object
-\emph{again}, thus causing a double-free and crash. The implementation of
+\emph{again}, thus causing a double-free and potentially crash\footnote{On
+recent Linux systems using the glibc library double-free always causes aborts,
+thus making debugging somewhat easier since the problem manifests itself
+immediately.  On other systems this might just silently cause memory corruption
+leading to potential crashes at other points in time}. The implementation of
 custom blocks for \emph{own} entries defines a custom finalization function
 which calls \inline{archive\_entry\_free}. Not calling it would be an error and
 leak entry objects. Yet this distinction is only in the C code — both custom
-blocks are exported to the OCaml code as one single type. This seems odd, but
+blocks are exported to the OCaml code as one single type.  This seems odd, but
 it is correct as the only difference between these two entry types is that they
 have different finalization functions but the \emph{content} of the block is
 the same — a pointer to an entry object.
@@ -1098,8 +1103,8 @@ saving to a file or streaming to a remote computer can still be done.
 libarchive provides such a function, unfortunately this function saves into a
 \emph{fixed} memory buffer. This creates a number of problems since it is not
 known how big an archive that is produced by libarchive will be. It might turn
-out very small on efficient compression, e.g. text, in which case a fixed
-buffer is not used and lot of memory is wasted. On the other hand, when
+out very small on efficient compression, e.g. for text data, in which case a
+fixed buffer is not used and lot of memory is wasted. On the other hand, when
 compressing already compressed data like compressed music or movies, it might
 turn out even larger than before, thus overflowing a buffer.
 
@@ -1139,7 +1144,7 @@ usage.
 \section{Functional streaming interface}
 \label{sec:functional}
 
-As the low level interface was implemented we had a way to do compression and
+With the low level interface implemented, we had a way to do compression and
 decompression in OCaml via libarchive, but in a very inconvenient matter which
 has to do with the fact that the low level interface reflects the C interface
 from libarchive: each operation require quite a lot of set up to do a simple
@@ -1148,15 +1153,14 @@ an incorrect order, the system would just crash. Therefore, some higher level
 abstractions will be introduced to make the interface easier to use and the
 usage less error prone.
 
-We will make the interface less error prone by adding more information to the
-types by using phantom types, described in \autoref{sec:phantom}. Also, apart
-from programmer errors during programming, there might be errors happening on
-run time: the archive that is supposed to be read does not exist, the archive
-file is corrupt or maybe the data can't be written because the disk is full.
-For this, C code commonly uses special return values. The downside of this
-approach is that the programmer might forget to check the return value, so the
-program continues to run despite the error causing even more problems and
-\enquote{weird} behaviour.
+We will improve the interface  by adding more information to the types by using
+phantom types, described in \autoref{sec:phantom}. Also, apart from programmer
+errors during programming, there might be errors happening at run time: the
+archive that is supposed to be read does not exist, the archive file is corrupt
+or maybe the data can't be written because the disk is full.  For this, C code
+commonly uses special return values. The downside of this approach is that the
+programmer might forget to check the return value, so the program continues to
+run despite the error causing even more problems and \enquote{weird} behaviour.
 
 Some programming languages use \enquote{exceptions} instead — special error
 states that halt the normal execution so the programmer will have to deal with
@@ -1181,21 +1185,21 @@ all functions in libarchive that handle archives. The \inline{entry} object
 represents an entry in an archive, be it file or folder and is only valid for
 one single entry.
 
-The \inline{archive} type can be thought of a file handle, similar to
+The \inline{archive} type can be thought of as a file handle, similar to
 \inline{FILE} from C. Similar to the C type, it can be both open and closed. In
-addition, libarchive differentiates between \enquote{read} and \enquote{write}
-\inline{archive} handles: \enquote{read} handles are used for opening and
-extracting files from an archive and are created with a specific API call,
-\enquote{write} handles are used to create archives and have their own specific
-creation function. For simplicity, libarchive does not differentiate between
-these types of handle in the type signature as both handle types are of type
+addition, libarchive makes a difference between \enquote{read} and
+\enquote{write} \inline{archive} handles: \enquote{read} handles are used for
+opening and extracting files from an archive and are created with a specific
+API call, \enquote{write} handles are used to create archives and have their
+own specific creation function. For simplicity, libarchive does not encode this
+difference into the type of the handles as both handle types are of type
 \inline{struct archive}, yet writing to a \enquote{read} handle is not a valid
 operation.
 
 Apart from the \enquote{open} and \enquote{closed} states more possible states
 exist: after creating a \enquote{read} handle, the compressed data has yet to
 be passed to libarchive, as such the handle can be considered \enquote{empty}
-on creatin and \enquote{populated} after feeding in the compressed data.
+on creation and \enquote{populated} after feeding in the compressed data.
 Decompressing entries from \enquote{read} handles of course only makes sense if
 they are \enquote{populated}.
 
@@ -1379,12 +1383,12 @@ that come to mind divide into two categories:
     \enquote{eager} fashion: it immediately computes its result and provides
     this result to the next link in the chain. This works well but leads to
     unnecessary work in some cases: to decompress a ZIP file and recompress it
-    as compressed TAR file the data is currently decompressed in the C layer,
-    handed to the OCaml layer and then recompressed in the C layer in the new
-    format. Fortunately, libarchive can write directly to a new format, so
-    returning the decompressed data to OCaml is useless.  If the chain of
-    operations were first preprocessed first one could detect such roundtrips
-    and optimize the operations to increase the performance.
+    as compressed TAR file the data is currently completely decompressed in
+    the C layer, handed to the OCaml layer and then recompressed in the C layer
+    in the new format. Fortunately, libarchive can write directly to a new
+    format, so returning the decompressed data to OCaml is useless.  If the
+    chain of operations were first preprocessed first one could detect such
+    roundtrips and optimize the operations to increase the performance.
 \end{enumerate}
 
 \section{Conclusion}
