@@ -613,7 +613,16 @@ concentrate fully on the functionality.
 The software is going to be called OStreamer, as a concatenation of
 \emph{O}Caml and \emph{Streams} with a small nod to the G\emph{Streamer}
 multimedia framework. This name was chosen as not too exotic sounding yet
-sufficiently distinctive, unique and memorable.
+sufficiently distinctive, unique and memorable. The source code will be
+published under the GNU Lesser General Public License, version 2.1 with an
+OCaml linking exception\footnote{LGPL does not cover linking of OCaml
+libraries, therefore additional clauses to allow linking to non-LGPL code are
+required}. This means that the software can be used freely in any OCaml
+project, yet changes to the OStreamer code have to be published. To give the
+code a maximum of exposure, it will be available on the popular code sharing
+web site \emph{GitHub}, at the author's profile
+\url{https://github.com/Leonidas-from-XIV/ostreamer} after the publication of
+the thesis.
 
 \section{Architecture}
 \label{sec:architecture}
@@ -1367,8 +1376,10 @@ match Pipe.construct raw_gz_file |> Pipe.decompress with
 \section{Interface}
 \label{sec:interface}
 
-This section describes the how to install and use OStreamer and what APIs are
-currently available.
+This section describes the technical details on how to install and use
+OStreamer and what APIs are currently available as well as how they are used.
+For an even more in-detail view, the reader is encouraged to view the source of
+OStreamer and to read the documentation of libarchive.
 
 \subsection{API}
 \label{sec:api}
