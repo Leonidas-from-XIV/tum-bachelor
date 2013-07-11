@@ -1610,17 +1610,56 @@ OK
   \label{lst:compiling}
 \end{listing}
 
-% TODO Usage
-\begin{minted}[linenos]{ocaml}
-let test_pipe_decompress _ =
+After installation, both low level as well as high level APIs can be used. For
+increased type safety and easier usage, the high level API demonstrated in
+\autoref{lst:usage} is recommended.
+
+\begin{listing}[H]
+  \begin{minted}[linenos]{ocaml}
+let compress_roundtrip _ =
   let (|>) = Pipe.(|>) in
-  match Pipe.construct raw_gz_file |> Pipe.decompress with
-  | ErrorMonad.Success (entries) -> let first = List.hd entries in
-    (match first with
-    | Archive.File (content, meta) -> assert_equal content raw_file
-    | _ -> assert_failure "Did not decompress to a file")
-  | ErrorMonad.Failure (code, str) -> assert_failure "Decompression failed"
-\end{minted}
+  let meta = Archive.generate_metadata "filename" in
+  let entry = Archive.File ("contents", meta) in
+  let compress_raw_gz = Pipe.compress Archive.RawFormatWriter [Archive.GZipFilterWriter] in
+  match Pipe.construct [entry] |> compress_raw_gz |> Pipe.decompress with
+  | ErrorMonad.Success (entries) -> (match entries with
+    | [Archive.File (c, m)] -> print_endline (String.concat " " ["Contents:"; c])
+    | [r] -> print_endline "Not handling other types of entries"
+    | x::xs -> print_endline "Not handling multiple entries"
+    | [] -> print_endline "Not handling zero entries")
+  | ErrorMonad.Failure (errcode, errmsg) -> print_endline "Operation failed"
+  \end{minted}
+  \caption{Usage of OStreamer's high level API}
+  \label{lst:usage}
+\end{listing}
+
+Line~2 defines a local alias for the \inline{|>} operator, which makes it
+possible to use it with infix syntax in the following code. These aliases can
+be also outside of the functions and can also be used by using \inline{open
+Pipe} to include the contents of the whole module. In line~3 a convenience
+function to generate \inline{ost\_metadata} is used and line~4 constructs an
+\inline{ost\_entry} type representind a file with the content
+\texttt{"contents"} and the file name \texttt{filename}. Line 5 creates a
+curried function for convenience — \inline{compress} is specialized with a
+\inline{RawFormatWriter} and \inline{GZipFilterWriter}, thus compressing the
+file using plain \emph{GZip} without a container format.
+
+The most interesting part is line~6 which constructs a pipeline. First it wraps
+the single file, represented by a list with one element containing
+\inline{entry} into the pipeline type. Then, it compresses the files into a
+\emph{GZip} file. This file is then decompressed (using automatic file type
+detection) by \inline{Pipe.decompress}. The result can be either a
+\inline{Failure} in which case an error message will be printed or a
+\inline{Success} in which case the result has to be evaluated. If it is a file,
+its content will be printed, otherwise a message is shown why this file could
+not be printed.
+
+We can conclude from \autoref{lst:usage}, that the high level API provides a
+conventient way to handle the data. Compression and decompression is
+essentially one single function each and the pipeline makes composing more
+operations in this manner trivial. One can see that errors from the pipeline
+are handled in one central place, line~12 and the library itself presents an
+API that can be easily picked up by OCaml programmers.
 
 \chapter{Discussion}
 \label{sec:discussion}
