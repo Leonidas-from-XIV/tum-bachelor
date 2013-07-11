@@ -1558,7 +1558,7 @@ constructed and is a lot simpler.
 % TODO add compress
 \begin{minted}[linenos]{ocaml}
 val decompress: string -> ost_entry list ErrorMonad.t
-val (|>): ErrorMonad.t -> (t -> ErrorMonad.d) -> ErrorMonad.t
+val (|>): ErrorMonad.t -> (t -> ErrorMonad.t) -> ErrorMonad.t
 \end{minted}
 
 \subsection{Usage}
@@ -1571,7 +1571,7 @@ To install OStreamer a number of prerequisites need to be installed:
 	  tested with OCaml 4.00.1
   \item OASIS, tested with 0.3.0
   \item libarchive, a version newer than 3.1.2, e.g. the development version
-	  including commit \texttt{59cf95f5d9}. Development packages (if any)
+	  including commit \texttt{3ae99fbc24}. Development packages (if any)
 	  also need to be installed.
 \end{itemize}
 
