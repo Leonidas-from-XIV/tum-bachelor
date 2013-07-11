@@ -63,7 +63,13 @@
 \setsansfont{Linux Biolinum O}
 \setmonofont[Scale=0.8]{Droid Sans Mono Dotted}
 
+% Highlighting style
 \usemintedstyle{tango}
+% the highlighter fails sometimes and draws an ugly box around things he does
+% not understand. remove the box by redefining the style to be 'nothing'
+\makeatletter
+  \def\PY@tok@err{}
+\makeatother
 
 \hypersetup{
 %	bookmarks=true,          % show bookmarks bar?
@@ -1348,7 +1354,7 @@ fashion similar to pipes from shell programming as demonstrated in
 
 \begin{listing}[H]
   \begin{minted}[linenos]{ocaml}
-match Pipe.construct raw_gz_file >>= Pipe.decompress with
+match Pipe.construct raw_gz_file |> Pipe.decompress with
 | ErrorMonad.Success (value) -> _
 | ErrorMonad.Failure (code, message) -> _
   \end{minted}
@@ -1444,7 +1450,27 @@ compressed archive, the write handle has to be closed, using
 \inline{write\_close}, which returns either the compressed data or an error
 message via the error monad type.
 
+This concludes the low level API. From this point the high level API was constructed and is a lot simpler.
+
+% TODO add compress
+\begin{minted}[linenos]{ocaml}
+val decompress: string -> ost_entry list ErrorMonad.t
+val (|>): ErrorMonad.t -> (t -> ErrorMonad.d) -> ErrorMonad.t
+\end{minted}
+
 % TODO: merge in the part I wrote about the formats and filters
+
+% TODO Usage
+\begin{minted}[linenos]{ocaml}
+let test_pipe_decompress _ =
+  let (|>) = Pipe.(|>) in
+  match Pipe.construct raw_gz_file |> Pipe.decompress with
+  | ErrorMonad.Success (entries) -> let first = List.hd entries in
+    (match first with
+    | Archive.File (content, meta) -> assert_equal content raw_file
+    | _ -> assert_failure "Did not decompress to a file")
+  | ErrorMonad.Failure (code, str) -> assert_failure "Decompression failed"
+\end{minted}
 
 
 
