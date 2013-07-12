@@ -1411,23 +1411,14 @@ to recognize. The only exception is the \inline{NoneFilterReader}, which is
 required to read archives that are not wrapped in a filter, e.g. when reading
 TAR files that are not compressed. More than one filter can be selected.
 
-\begin{multicols}{3}
-  \begin{itemize}[nolistsep]
-    \item \texttt{AllFilterReader}
-    \item \texttt{BZip2FilterReader}
-    \item \texttt{CompressFilterReader}
-    \item \texttt{GRZipFilterReader}
-    \item \texttt{GZipFilterReader}
-    \item \texttt{LRZipFilterReader}
-    \item \texttt{LZipFilterReader}
-    \item \texttt{LZMAFilterReader}
-    \item \texttt{LZOPFilterReader}
-    \item \texttt{NoneFilterReader}
-    \item \texttt{RPMFilterReader}
-    \item \texttt{UUFilterReader}
-    \item \texttt{XZFilterReader}
-  \end{itemize}
-\end{multicols}
+\begin{minted}[linenos]{ocaml}
+type read_filter =
+  | AllFilterReader        | LRZipFilterReader      | RPMFilterReader
+  | BZip2FilterReader      | LZipFilterReader       | UUFilterReader
+  | CompressFilterReader   | LZMAFilterReader       | XZFilterReader
+  | GRZipFilterReader      | LZOPFilterReader
+  | GZipFilterReader       | NoneFilterReader
+\end{minted}
 
 The possible formats for reading include all formats that libarchive supports.
 \inline{AllFormatReader} reads all formats, except for uncompressed files. An
