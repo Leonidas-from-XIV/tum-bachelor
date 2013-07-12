@@ -1379,11 +1379,11 @@ OStreamer and what APIs are currently available as well as how they are used.
 For an even more in-detail view, the reader is encouraged to view the source of
 OStreamer and to read the documentation of libarchive.
 
-\subsection{API}
-\label{sec:api}
+\subsection{Low level API}
+\label{sec:llapi}
 
-It is best to describe the lower level API first, since to understand the
-inner workings of the higher level API the details might be helpful. We start
+It is best to describe the lower level API first, to better understand the
+inner workings of the higher level API. We start
 with the definition of the libarchive handles, but unlike libarchive these are
 of distinct types and can be annotated with extra values, they are called
 \inline{r} for read handles and \inline{w} for write handles. Short names were
@@ -1399,15 +1399,17 @@ val read_new_configured: read_format list -> read_filter list -> [`Empty] r
 val write_new_configured: write_format -> write_filter list -> [`Closed] w
 \end{minted}
 
-The resulting value is an \enquote{empty} read handle, since no compressed data was yet
-fed into libarchive that could be decompressed. Similarly, the write handle is
-\enquote{closed}, since there was no space allocated to write the data to.
+The resulting value is an \enquote{empty} read handle, since no compressed data
+was yet fed into libarchive that could be decompressed. Similarly, the write
+handle is \enquote{closed}, since there was no space allocated to write the
+data to.
 
-The filters that are possible for reading files are listed below, most notably
-the \inline{AllFilterReader} which reads all formats which libarchive is able
-to recognize. The only exception is the \inline{NoneFilterReader}, which is
-required to read archives that are not wrapped in a filter, e.g. when reading
-TAR files that are not compressed. More than one filter can be selected.
+The available \inline{read\_filter} filters that are possible for reading files
+are listed below, most notably the \inline{AllFilterReader} which reads all
+formats which libarchive is able to recognize. The only exception is the
+\inline{NoneFilterReader}, which is required to read archives that are not
+wrapped in a filter, e.g. when reading TAR files that are not compressed. More
+than one filter can be selected.
 
 \begin{minted}[linenos]{ocaml}
 type read_filter =
@@ -1460,8 +1462,10 @@ type write_format =
 
 To decompress data, one first has to \inline{feed\_data} to the handle which
 makes the handle change state from an \enquote{empty} to \enquote{populated}.
-Only from this state can data be extracted, which happens with
-\inline{extract\_all}.
+The data to be fed is expected to be a byte array, which is represented by an
+OCaml string. OCaml strings can contain zero bytes, therefore they can be used
+to store binary data.  Only from this state can data be extracted, which
+happens with \inline{extract\_all}.
 
 \begin{minted}[linenos]{ocaml}
 val feed_data: [`Empty] r -> string -> [`Populated] r
@@ -1500,7 +1504,10 @@ common values are \inline{S\_REG} for regular files and \inline{S\_DIR} for
 directories. The content of regular files is represented as an union type,
 \inline{ost\_entry}, which is useful when iterating over archive entries since
 it forces the programmer to handle all defined file types, thus potentially
-improving the quality of programs since they need to handle these cases.
+improving the quality of programs since they need to handle these cases. In the
+case of a file, the \inline{ost\_entry} constructor consists of a tuple of the
+file's contents, represented as byte array of type \inline{string} as well as
+the meta data. A directory entry only consists of the meta data.
 
 When writing, an analogous set of operations exist. A \enquote{closed} handle
 has to be converted into an \enquote{opened} handle, which is done by
@@ -1519,11 +1526,14 @@ val write_close: [`Open] w -> string ErrorMonad.t
 
 The data is written in a lazy fashion by libarchive, so to retrieve the
 compressed archive, the write handle has to be closed, using
-\inline{write\_close}, which returns either the compressed data or an error
-message via the error monad type.
+\inline{write\_close}, which returns either the compressed data as a byte array
+of type \inline{string} or an error message, both via the error monad type.
 
 This concludes the low level API. From this point the high level API was
 constructed and is a lot simpler to use.
+
+\subsection{High level API}
+\label{sec:hlapi}
 
 \begin{minted}[linenos]{ocaml}
 val construct: 'a -> 'a ErrorMonad.t
@@ -1538,8 +1548,8 @@ or more operations like \inline{decompress} or \inline{compress} can be chained
 using the \inline{|>} operator, very similar to how data can be processed in
 Unix shells. Ath the end of the processing, an \inline{ErrorMonad} type is
 returned which can be pattern matched to get the resulting value, or in the
-case of an error, the error message. A sample usage of the high level API shown
-in in \autoref{sec:usage}.
+case of an error, the error message. A sample usage of the high level API is
+shown in \autoref{sec:usage}.
 
 \subsection{Usage}
 \label{sec:usage}
@@ -1547,18 +1557,18 @@ in in \autoref{sec:usage}.
 To install OStreamer a number of prerequisites need to be installed:
 
 \begin{itemize}
-  \item OCaml, at best a version with native compilers (\texttt{ocamlopt.opt})
-	  tested with OCaml 4.00.1
-  \item OASIS, tested with 0.3.0
+  \item OCaml, at best a version with native compilers (\texttt{ocamlopt.opt});
+    tested with OCaml 4.00.1
+  \item OASIS; tested with 0.3.0
   \item libarchive, a version newer than 3.1.2, e.g. the development version
-	  including commit \texttt{3ae99fbc24}. Development packages (if any)
-	  also need to be installed.
+    including commit \texttt{3ae99fbc24}. Development packages (if any) also
+    need to be installed.
 \end{itemize}
 
 If the operating system or distribution ships an outdated version of
 libarchive, it can also be installed in a separate location. In that case, some
 adjustments need to be done to use the newer libarchive, in particular setting
-the GCC options to pick up the proper include files and to link agains the
+the GCC options to pick up the proper include files and to link against the
 proper shared objects that include the patches written as part of this thesis.
 This issue will go away in the future when a new release of libarchive is made
 and included in the newest versions of the operating systems.
@@ -1568,10 +1578,10 @@ along with a call to the unit test to verify the code works properly.
 
 \begin{listing}[H]
   \begin{minted}[linenos]{bash}
-oasis setup
-ocaml setup.ml -configure
-ocaml setup.ml -build
-./unittest.native
+$ oasis setup
+$ ocaml setup.ml -configure
+$ ocaml setup.ml -build
+$ ./unittest.native
 ......
 Ran: 6 tests in: 0.02 seconds.
 OK
@@ -1580,7 +1590,7 @@ OK
   \label{lst:compiling}
 \end{listing}
 
-After installation, both low level as well as high level APIs can be used. For
+After installation, both low level as well as high level APIs are available. For
 increased type safety and easier usage, the high level API demonstrated in
 \autoref{lst:usage} is recommended.
 
@@ -1588,8 +1598,8 @@ increased type safety and easier usage, the high level API demonstrated in
   \begin{minted}[linenos]{ocaml}
 let compress_roundtrip _ =
   let (|>) = Pipe.(|>) in
-  let meta = Archive.generate_metadata "filename" in
-  let entry = Archive.File ("contents", meta) in
+  let meta = Archive.generate_metadata "myfile.txt" in
+  let entry = Archive.File ("Hello Real World!", meta) in
   let compress_raw_gz = Pipe.compress Archive.RawFormatWriter [Archive.GZipFilterWriter] in
   match Pipe.construct [entry] |> compress_raw_gz |> Pipe.decompress with
   | ErrorMonad.Success (entries) -> (match entries with
