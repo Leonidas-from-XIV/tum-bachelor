@@ -1379,7 +1379,7 @@ OStreamer and what APIs are currently available as well as how they are used.
 For an even more in-detail view, the reader is encouraged to view the source of
 OStreamer and to read the documentation of libarchive.
 
-\subsection{Low level API}
+\subsection{Low-level API}
 \label{sec:llapi}
 
 It is best to describe the lower level API first, to better understand the
@@ -1529,11 +1529,16 @@ compressed archive, the write handle has to be closed, using
 \inline{write\_close}, which returns either the compressed data as a byte array
 of type \inline{string} or an error message, both via the error monad type.
 
-This concludes the low level API. From this point the high level API was
-constructed and is a lot simpler to use.
+This concludes the low-level API. From this point the high-level API was
+constructed and is a lot simpler to use. It should be preferred in typical
+code, unless there is a specific need for the lower level functions.
 
-\subsection{High level API}
+\subsection{High-level API}
 \label{sec:hlapi}
+
+The high-level API consists of just a few functions. In particular, all handle
+types are abstracted away, only the format, filter and entry types remain. At
+this level, the \inline{ErrorMonad} types are introduced.
 
 \begin{minted}[linenos]{ocaml}
 val construct: 'a -> 'a ErrorMonad.t
