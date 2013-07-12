@@ -11,8 +11,6 @@
 \usepackage[normalem]{ulem}
 \usepackage{biblatex}
 \usepackage{haskelllogo}
-\usepackage{multicol}
-\usepackage{enumitem}
 
 \bibliography{bachelor}
 
@@ -1426,69 +1424,39 @@ example of such data are files that are only compressed using \emph{GZip}.
 These need to be read using the \inline{RawFormatReader}, because the
 decompression is already handled by the filter.
 
-\begin{multicols}{3}
-  \begin{itemize}[nolistsep]
-     \item \texttt{SevenZipFormatReader}
-     \item \texttt{AllFormatReader}
-     \item \texttt{ARFormatReader}
-     \item \texttt{CABFormatReader}
-     \item \texttt{CPIOFormatReader}
-     \item \texttt{GnuTARFormatReader}
-     \item \texttt{ISO9660FormatReader}
-     \item \texttt{LHAFormatReader}
-     \item \texttt{MtreeFormatReader}
-     \item \texttt{RARFormatReader}
-     \item \texttt{RawFormatReader}
-     \item \texttt{TARFormatReader}
-     \item \texttt{XARFormatReader}
-     \item \texttt{ZipFormatReader}
-  \end{itemize}
-\end{multicols}
+\begin{minted}[linenos]{ocaml}
+type read_format =
+  | SevenZipFormatReader   | GnuTARFormatReader     | RawFormatReader
+  | AllFormatReader        | ISO9660FormatReader    | TARFormatReader
+  | ARFormatReader         | LHAFormatReader        | XARFormatReader
+  | CABFormatReader        | MtreeFormatReader      | ZipFormatReader
+  | CPIOFormatReader       | RARFormatReader
+\end{minted}
 
 Similar to reading, there are also filters for writing, although a smaller
 amount, since not every filter that can be read can also be written. In the
 case of writing the data, the filter has to be chosen manually and can't be
 chosen automatically.
 
-\begin{multicols}{3}
-  \begin{itemize}[nolistsep]
-    \item \texttt{Base64FilterWriter}
-    \item \texttt{BZip2FilterWriter}
-    \item \texttt{CompressFilterWriter}
-    \item \texttt{GRZipFilterWriter}
-    \item \texttt{GZipFilterWriter}
-    \item \texttt{LRZipFilterWriter}
-    \item \texttt{LZipFilterWriter}
-    \item \texttt{LZMAFilterWriter}
-    \item \texttt{LZOPFilterWriter}
-    \item \texttt{NoneFilterWriter}
-    \item \texttt{UUFilterWriter}
-    \item \texttt{XZFilterWriter}
-  \end{itemize}
-\end{multicols}
+\begin{minted}[linenos]{ocaml}
+type write_filter =
+  | Base64FilterWriter     | GZipFilterWriter       | LZOPFilterWriter
+  | BZip2FilterWriter      | LRZipFilterWriter      | NoneFilterWriter
+  | CompressFilterWriter   | LZipFilterWriter       | UUFilterWriter
+  | GRZipFilterWriter      | LZMAFilterWriter       | XZFilterWriter
+\end{minted}
 
 The same goes for the write format, it has to be chosen manually. There can
 be only one write format chosen per handle.
 
-\begin{multicols}{3}
-  \begin{itemize}[nolistsep]
-    \item \texttt{SevenZipFormatWriter}
-    \item \texttt{ARBSDFormatWriter}
-    \item \texttt{ARSVR4FormatWriter}
-    \item \texttt{CPIOFormatWriter}
-    \item \texttt{CPIONEWCFormatWriter}
-    \item \texttt{GnuTARFormatWriter}
-    \item \texttt{ISO9660FormatWriter}
-    \item \texttt{MtreeFormatWriter}
-    \item \texttt{PAXFormatWriter}
-    \item \texttt{RawFormatWriter}
-    \item \texttt{SharFormatWriter}
-    \item \texttt{USTARFormatWriter}
-    \item \texttt{V7TARFormatWriter}
-    \item \texttt{XARFormatWriter}
-    \item \texttt{ZipFormatWriter}
-  \end{itemize}
-\end{multicols}
+\begin{minted}[linenos]{ocaml}
+type write_format =
+  | SevenZipFormatWriter   | GnuTARFormatWriter     | SharFormatWriter
+  | ARBSDFormatWriter      | ISO9660FormatWriter    | USTARFormatWriter
+  | ARSVR4FormatWriter     | MtreeFormatWriter      | V7TARFormatWriter
+  | CPIOFormatWriter       | PAXFormatWriter        | XARFormatWriter
+  | CPIONEWCFormatWriter   | RawFormatWriter        | ZipFormatWriter
+\end{minted}
 
 To decompress data, one first has to \inline{feed\_data} to the handle which
 makes the handle change state from an \enquote{empty} to \enquote{populated}.
