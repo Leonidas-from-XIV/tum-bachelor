@@ -1,5 +1,8 @@
-all: logos
+all: logos label.pdf
 	latexmk bachelor.tex
+
+label.pdf:
+	latexmk label.tex
 
 tum.pdf:
 	gs -sDEVICE=pdfwrite -sOutputFile=tum_full.pdf -dBATCH -dNOPAUSE uni.tum.ps
